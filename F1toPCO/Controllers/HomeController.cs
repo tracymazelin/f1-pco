@@ -110,7 +110,8 @@ namespace F1toPCO.Controllers
         [HttpPost]
         public ActionResult Index(string churchCode) {
             this.ChurchCode = churchCode;
-            this.f1OAuth = new OAuthUtil("staging.fellowshiponeapi.com", this.ChurchCode, "v1", "PortalUser", "163", "de1bee74-93c1-4a72-b6e5-0192e5569219");
+//            this.f1OAuth = new OAuthUtil("fellowshiponeapi.local", this.ChurchCode, "v1", "PortalUser", "163", "de1bee74-93c1-4a72-b6e5-0192e5569219");
+            this.f1OAuth = new OAuthUtil("fellowshiponeapi.local", this.ChurchCode, "v1", "PortalUser", "7", "fdf335cc-1863-4c66-8c29-baeac856c895");
 
             this.RequestToken = this.f1OAuth.GetRequestToken();
 
@@ -130,28 +131,28 @@ namespace F1toPCO.Controllers
 
             this.AccessToken = this.f1OAuth.GetAccessToken(this.RequestToken, out personUrl);
 
-            //this.pcoOAuth = new OAuthUtil();
+            this.pcoOAuth = new OAuthUtil();
 
-            //Token test = this.pcoOAuth.GetRequestToken();
+            Token test = this.pcoOAuth.GetRequestToken();
 
-            //if (test != null) {
-            //    string callBack = string.Format("http://{0}/F1toPCO/CallBack", Request.Url.Host);
+            if (test != null) {
+                string callBack = string.Format("http://{0}/F1toPCO/CallBack", Request.Url.Host);
 
-            //    string authLink = this.pcoOAuth.RequestUserAuth(test.Value, callBack);
+                string authLink = this.pcoOAuth.RequestUserAuth(test.Value, callBack);
 
-            //    return new RedirectResult(authLink);
-            //}
+                return new RedirectResult(authLink);
+            }
 
             try {
 				// Create a request to the API to obtain the person.
-				HttpWebRequest webRequest = this.f1OAuth.CreateWebRequestFromPartialUrl(string.Format("People/Search?searchFor={0}", "meyer,c"), this.AccessToken, HttpRequestMethod.GET);
+				HttpWebRequest webRequest = this.f1OAuth.CreateWebRequestFromPartialUrl(string.Format("People/Search?searchFor={0}", "klein"), this.AccessToken, HttpRequestMethod.GET);
                                
                 using (WebResponse webResponse = webRequest.GetResponse()) {
                     using (StreamReader streamReader = new StreamReader(webResponse.GetResponseStream())) {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(person));
-                        
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(results));
+
                         // Deserialize the response into a Person object.
-                        person person = xmlSerializer.Deserialize(streamReader) as person;
+                        results peeps  = xmlSerializer.Deserialize(streamReader) as results;
                     }
                 }
             }

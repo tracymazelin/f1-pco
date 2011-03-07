@@ -104,7 +104,7 @@ namespace F1toPCO.Util
         /// <returns></returns>
         public string CreateAPIUrl(string baseAPIUrl, string apiVersion, string partialUrl)
         {
-            return string.Format("https://{0}.{1}/{2}/{3}", this.ChurchCode, baseAPIUrl, apiVersion, partialUrl);
+            return string.Format("http://{0}.{1}/{2}/{3}", this.ChurchCode, baseAPIUrl, apiVersion, partialUrl);
         }
 
         /// <summary>
@@ -303,7 +303,6 @@ namespace F1toPCO.Util
 
         //    return credentials;
         //}
-
 
         /// <summary>
         /// Generate the signature base that is used to produce the signature
