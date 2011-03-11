@@ -8,3 +8,10 @@ C:\dev\F1toPCO\F1toPCO\bin\F1toPCO.pdb
 C:\dev\F1toPCO\F1toPCO\obj\Debug\ResolveAssemblyReference.cache
 C:\dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.dll
 C:\dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.pdb
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\obj\Debug\ResolveAssemblyReference.cache
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.dll
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\F1toPCO.dll
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\F1toPCO.pdb
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\Hammock.dll
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\Hammock.pdb
+C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.pdb
