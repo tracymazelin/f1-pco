@@ -161,12 +161,15 @@ namespace F1toPCO.Controllers {
                 Type = OAuthType.RequestToken,
                 SignatureMethod = OAuthSignatureMethod.HmacSha1,
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                ConsumerKey = "163",
-                ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219"
+                ConsumerKey = "2",
+                ConsumerSecret = "f7d02059-a105-45e0-85c9-7387565f322b",
+                //ConsumerKey = "163",
+                //ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219"
             };
 
             var client = new RestClient {
-                Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                //Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                Authority = string.Format("http://{0}.fellowshiponeapi.local", this.ChurchCode),
                 VersionPath = "v1",
                 Credentials = f1Creds
             };
@@ -189,14 +192,17 @@ namespace F1toPCO.Controllers {
                 Type = OAuthType.AccessToken,
                 SignatureMethod = OAuthSignatureMethod.HmacSha1,
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                ConsumerKey = "163",
-                ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                //ConsumerKey = "163",
+                //ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                ConsumerKey = "2",
+                ConsumerSecret = "f7d02059-a105-45e0-85c9-7387565f322b",
                 Token = this.F1RequestToken.Value,
                 TokenSecret = this.F1RequestToken.Secret
             };
 
             var client = new RestClient {
-                Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                Authority = string.Format("http://{0}.fellowshiponeapi.local", this.ChurchCode),
+                //Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
                 VersionPath = "v1",
                 Credentials = creds
             };
@@ -224,7 +230,7 @@ namespace F1toPCO.Controllers {
             };
 
             var pcoClient = new RestClient {
-                Authority = "https://www.planningcenteronline.com/oauth",
+                Authority = "https://www.planningcenteronline.com/oauth",                
                 Credentials = pcoCreds
             };
 
@@ -282,14 +288,17 @@ namespace F1toPCO.Controllers {
                 Type = OAuthType.AccessToken,
                 SignatureMethod = OAuthSignatureMethod.HmacSha1,
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                ConsumerKey = "163",
-                ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                //ConsumerKey = "163",
+                //ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                ConsumerKey = "2",
+                ConsumerSecret = "f7d02059-a105-45e0-85c9-7387565f322b",
                 Token = this.F1AccessToken.Value,
                 TokenSecret = this.F1AccessToken.Secret
             };
 
             var client = new RestClient {
-                Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                Authority = string.Format("http://{0}.fellowshiponeapi.local", this.ChurchCode),
+                //Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
                 VersionPath = "v1",
                 Credentials = creds
             };
@@ -323,22 +332,26 @@ namespace F1toPCO.Controllers {
                 Type = OAuthType.AccessToken,
                 SignatureMethod = OAuthSignatureMethod.HmacSha1,
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                ConsumerKey = "163",
-                ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                //ConsumerKey = "163",
+                //ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                ConsumerKey = "2",
+                ConsumerSecret = "f7d02059-a105-45e0-85c9-7387565f322b",
                 Token = this.F1AccessToken.Value,
                 TokenSecret = this.F1AccessToken.Secret
             };
 
             var client = new RestClient {
-                Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                //Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                Authority = string.Format("http://{0}.fellowshiponeapi.local", this.ChurchCode),
                 VersionPath = "v1",
                 Credentials = creds
             };
 
             var request = new RestRequest {
-                Path = "People/Search"
+                Path = string.Format("People/Search", attributeId.ToString())
             };
             request.AddParameter("attribute", attributeId.ToString());
+            request.AddParameter("recordsperpage", "100");
 
             RestResponse response = client.Request(request);
             if (response.StatusCode == HttpStatusCode.OK) {

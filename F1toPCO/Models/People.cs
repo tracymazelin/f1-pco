@@ -20,6 +20,18 @@ using System.Collections.Generic;
 public class results {
     [System.Xml.Serialization.XmlElementAttribute(ElementName = "person")]
     public List<person> Person { get; set; }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "pageNumber")]
+    public string page { get; set; }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "count")]
+    public string count { get; set; }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "totalRecords")]
+    public string total { get; set; }
+
+    [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "additionalPages")]
+    public string pages { get; set; }    
 }
 
 /// <remarks/>
