@@ -84,10 +84,11 @@
     <Compile Include="Util\OAuthUtil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\PrivateConsts.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Views\Home\CallBack.aspx" />
+    <Content Include="Views\Home\StartSync.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

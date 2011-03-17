@@ -15,3 +15,5 @@ C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\F1toPCO.pdb
 C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\Hammock.dll
 C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\Hammock.pdb
 C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.pdb
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\F1toPCO\bin\Hammock.dll
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\F1toPCO\bin\Hammock.pdb

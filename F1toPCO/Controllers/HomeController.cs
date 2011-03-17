@@ -17,7 +17,7 @@ namespace F1toPCO.Controllers {
     public class HomeController : Controller {
 
         #region Properties
-       
+
         public string ChurchCode {
             get {
                 if (Session["ChurchCode"] != null) {
@@ -68,7 +68,7 @@ namespace F1toPCO.Controllers {
                 }
             }
         }
-        
+
         public Token F1RequestToken {
             get {
                 if (Session["F1RequestToken"] != null) {
@@ -115,6 +115,48 @@ namespace F1toPCO.Controllers {
 
             this.ChurchCode = churchCode;
 
+            this.GetF1RequestToken();
+
+            return Redirect(string.Format(PrivateConsts.f1AuthorizeUrl, this.ChurchCode, this.F1RequestToken.Value, PrivateConsts.f1CalBack));
+        }
+
+        public ActionResult CallBack() {
+
+            string provider = Request.QueryString["provider"];
+
+            if (provider == "f1") {
+                this.GetF1AccessToken();
+
+                this.GetPCORequestToken();
+
+                return Redirect(string.Format(PrivateConsts.pcoAuthorizeUrl, this.PCORequestToken.Value));
+            }
+            else {
+                this.PCORequestToken.Verifier = Request.QueryString["oauth_verifier"];
+
+                this.GetPCOAccessToken();
+
+                return RedirectToAction("StartSync");
+            }
+        }
+
+        public ActionResult StartSync() {
+            int attributeID = this.GetAttributeID("SyncMe");
+
+            results peeps = this.GetF1People(attributeID);
+
+            return View(peeps);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        #region OAuth
+
+        private void GetF1RequestToken() {
+            this.F1RequestToken = new Token();
+
             var f1Creds = new OAuthCredentials {
                 Type = OAuthType.RequestToken,
                 SignatureMethod = OAuthSignatureMethod.HmacSha1,
@@ -136,30 +178,12 @@ namespace F1toPCO.Controllers {
             RestResponse response = client.Request(request);
 
             var collection = HttpUtility.ParseQueryString(response.Content);
-            this.F1RequestToken.Value = collection[0];
-            this.F1RequestToken.Secret = collection[1];
-
-            return Redirect(string.Format("https://{0}.staging.fellowshiponeapi.com/v1/PortalUser/Login?oauth_token={1}&oauth_callback={2}", this.ChurchCode, this.F1RequestToken.Value, "http://localhost/F1toPCO/CallBack"));
-
-            //            this.ChurchCode = churchCode;
-            ////            this.f1OAuth = new OAuthUtil("fellowshiponeapi.local", this.ChurchCode, "v1", "PortalUser", "163", "de1bee74-93c1-4a72-b6e5-0192e5569219");
-            //            this.f1OAuth = new OAuthUtil("fellowshiponeapi.local", this.ChurchCode, "v1", "PortalUser", "7", "fdf335cc-1863-4c66-8c29-baeac856c895");
-
-            //            this.RequestToken = this.f1OAuth.GetRequestToken();
-
-            //            if (this.RequestToken != null) {
-            //                string callBack = string.Format("http://{0}/F1toPCO/Home/CallBack", Request.Url.Host);
-
-            //                string authLink = f1OAuth.RequestUserAuth(this.RequestToken.Value, callBack);
-
-            //                return new RedirectResult(authLink);
-            //            }
-
-            //            return View();
+            this.F1RequestToken.Value = collection["oauth_token"];
+            this.F1RequestToken.Secret = collection["oauth_token_secret"];
         }
 
-        public ActionResult CallBack() {
-            string personUrl = null;
+        private void GetF1AccessToken() {
+            this.F1AccessToken = new Token();
 
             var creds = new OAuthCredentials {
                 Type = OAuthType.AccessToken,
@@ -177,7 +201,7 @@ namespace F1toPCO.Controllers {
                 Credentials = creds
             };
 
-             var request = new RestRequest {
+            var request = new RestRequest {
                 Path = "Tokens/AccessToken"
             };
 
@@ -185,43 +209,150 @@ namespace F1toPCO.Controllers {
 
             var collection = HttpUtility.ParseQueryString(response.Content);
             this.F1AccessToken.Value = collection["oauth_token"];
-            this.F1AccessToken.Secret = collection["oauth_secret"];
-
-            return View();
-
-        //    this.AccessToken = this.f1OAuth.GetAccessToken(this.RequestToken, out personUrl);
-
-        //    this.pcoOAuth = new OAuthUtil();
-
-        //    Token test = this.pcoOAuth.GetRequestToken();
-
-        //    if (test != null) {
-        //        string callBack = string.Format("http://{0}/F1toPCO/CallBack", Request.Url.Host);
-
-        //        string authLink = this.pcoOAuth.RequestUserAuth(test.Value, callBack);
-
-        //        return new RedirectResult(authLink);
-        //    }
-
-        //    try {
-        //        // Create a request to the API to obtain the person.
-        //        HttpWebRequest webRequest = this.f1OAuth.CreateWebRequestFromPartialUrl(string.Format("People/Search?searchFor={0}", "klein"), this.AccessToken, HttpRequestMethod.GET);
-
-        //        using (WebResponse webResponse = webRequest.GetResponse()) {
-        //            using (StreamReader streamReader = new StreamReader(webResponse.GetResponseStream())) {
-        //                XmlSerializer xmlSerializer = new XmlSerializer(typeof(results));
-
-        //                // Deserialize the response into a Person object.
-        //                results peeps = xmlSerializer.Deserialize(streamReader) as results;
-        //            }
-        //        }
-        //    }
-        //    catch (WebException ex) {
-        //        // TODO: add logging.
-        //        throw;
-        //    }
-        //    return View();
+            this.F1AccessToken.Secret = collection["oauth_token_secret"];
         }
+
+        private void GetPCORequestToken() {
+
+            var pcoCreds = new OAuthCredentials {
+                Type = OAuthType.RequestToken,
+                SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                ConsumerKey = "HfK94IoIKmm40sHeVykg",
+                ConsumerSecret = "wBWSl0szv2PhuGSxBUf7xyUjnnW389Bzou6EgPFA",
+                CallbackUrl = PrivateConsts.pcoCallback
+            };
+
+            var pcoClient = new RestClient {
+                Authority = "https://www.planningcenteronline.com/oauth",
+                Credentials = pcoCreds
+            };
+
+            var pcoRequest = new RestRequest {
+                Path = "request_token"
+            };
+
+            RestResponse pcoResponse = pcoClient.Request(pcoRequest);
+
+            this.PCORequestToken = new Token();
+            var pcoCollection = HttpUtility.ParseQueryString(pcoResponse.Content);
+            this.PCORequestToken.Value = pcoCollection["oauth_token"];
+            this.PCORequestToken.Secret = pcoCollection["oauth_token_secret"];
+        }
+
+        private void GetPCOAccessToken() {
+            this.PCOAccessToken = new Token();
+
+            var creds = new OAuthCredentials {
+                Type = OAuthType.AccessToken,
+                SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                ConsumerKey = "HfK94IoIKmm40sHeVykg",
+                ConsumerSecret = "wBWSl0szv2PhuGSxBUf7xyUjnnW389Bzou6EgPFA",
+                Token = this.PCORequestToken.Value,
+                TokenSecret = this.PCORequestToken.Secret,
+                Verifier = this.PCORequestToken.Verifier
+            };
+
+            var client = new RestClient {
+                Authority = "https://www.planningcenteronline.com/oauth",
+                Credentials = creds
+            };
+
+            var request = new RestRequest {
+                Path = "access_token"
+            };
+
+            RestResponse response = client.Request(request);
+
+            var collection = HttpUtility.ParseQueryString(response.Content);
+            this.PCOAccessToken.Value = collection["oauth_token"];
+            this.PCOAccessToken.Secret = collection["oauth_token_secret"];
+        }
+        
+        #endregion
+
+        #region REST
+
+        private int GetAttributeID(string name) {
+
+            int ret = 0;
+
+            var creds = new OAuthCredentials {
+                Type = OAuthType.AccessToken,
+                SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                ConsumerKey = "163",
+                ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                Token = this.F1AccessToken.Value,
+                TokenSecret = this.F1AccessToken.Secret
+            };
+
+            var client = new RestClient {
+                Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                VersionPath = "v1",
+                Credentials = creds
+            };
+
+            var request = new RestRequest {
+                Path = "People/AttributeGroups"
+            };
+
+            RestResponse response = client.Request(request);
+            if (response.StatusCode == HttpStatusCode.OK) {
+                using (StreamReader streamReader = new StreamReader(response.ContentStream)) {
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(attributeGroups));
+
+                    // Deserialize the response into a Person object.
+                    attributeGroups attributes = xmlSerializer.Deserialize(streamReader) as attributeGroups;
+
+                    var attributeId = (from a in attributes.attributeGroup
+                                  where a.attribute.name == "Baptism"
+                                  select a.attribute.id).FirstOrDefault();
+                    ret = Convert.ToInt32(attributeId);                    
+                }
+            }
+            return ret;
+        }
+
+        private results GetF1People(int attributeId) {
+
+            results peopleCollection = null;
+
+            var creds = new OAuthCredentials {
+                Type = OAuthType.AccessToken,
+                SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+                ConsumerKey = "163",
+                ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219",
+                Token = this.F1AccessToken.Value,
+                TokenSecret = this.F1AccessToken.Secret
+            };
+
+            var client = new RestClient {
+                Authority = string.Format("https://{0}.staging.fellowshiponeapi.com", this.ChurchCode),
+                VersionPath = "v1",
+                Credentials = creds
+            };
+
+            var request = new RestRequest {
+                Path = "People/Search"
+            };
+            request.AddParameter("attribute", attributeId.ToString());
+
+            RestResponse response = client.Request(request);
+            if (response.StatusCode == HttpStatusCode.OK) {
+                using (StreamReader streamReader = new StreamReader(response.ContentStream)) {
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(results));
+
+                    // Deserialize the response into a Person object.
+                    peopleCollection = xmlSerializer.Deserialize(streamReader) as results;
+                }
+            }
+            return peopleCollection;
+        }
+
+        #endregion
 
         #endregion
 

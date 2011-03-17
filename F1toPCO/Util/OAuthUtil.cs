@@ -13,5 +13,6 @@ namespace F1toPCO.Util
     {
         public string Value;
         public string Secret;
+        public string Verifier;
     }
 }
