@@ -36,6 +36,9 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Elmah">
+      <HintPath>Refs\Elmah.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -72,13 +75,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Addresses.cs" />
+    <Compile Include="Models\AttributeGroups.cs" />
     <Compile Include="Models\Attributes.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Communications.cs" />
     <Compile Include="Models\Households.cs" />
+    <Compile Include="Models\PCOPeople.cs" />
     <Compile Include="Models\People.cs" />
+    <Compile Include="Models\PeopleAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\HttpRequestMethod.cs" />
-    <Compile Include="Util\OAuthUtil.cs">
+    <Compile Include="Util\Util.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\PrivateConsts.cs" />

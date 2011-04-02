@@ -5,10 +5,10 @@ using System.Web;
 
 namespace F1toPCO.Util {
     public class PrivateConsts {
-        //public const string f1AuthorizeUrl = "https://{0}.staging.fellowshiponeapi.com/v1/PortalUser/Login?oauth_token={1}&oauth_callback={2}";
-        public const string f1AuthorizeUrl = "http://{0}.fellowshiponeapi.local/v1/PortalUser/Login?oauth_token={1}&oauth_callback={2}";
-        public const string f1CalBack = "http://localhost/F1toPCO/Home/CallBack?provider=f1";
-        public const string pcoAuthorizeUrl = "https://www.planningcenteronline.com/oauth/authorize?oauth_token={0}";
-        public const string pcoCallback = "http://localhost/F1toPCO/Home/CallBack?provider=pco";
+        public const string f1ConsumerKey ="163";
+        public const string f1ConsumerSecret = "de1bee74-93c1-4a72-b6e5-0192e5569219";
+            
+        public const string pcoConsumerKey  ="HfK94IoIKmm40sHeVykg";
+        public const string pcoConsumerSecret = "wBWSl0szv2PhuGSxBUf7xyUjnnW389Bzou6EgPFA";
     }
 }

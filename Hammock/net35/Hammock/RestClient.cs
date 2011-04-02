@@ -24,13 +24,11 @@ using Hammock.Web.Mocks;
 using Hammock.Silverlight.Compat;
 #endif
 
-namespace Hammock
-{
+namespace Hammock {
 #if !Silverlight
     [Serializable]
 #endif
-    public class RestClient : RestBase, IRestClient
-    {
+    public class RestClient : RestBase, IRestClient {
         private const string MockContentType = "mockContentType";
         private const string MockScheme = "mockScheme";
         private const string MockProtocol = "mock";
@@ -40,23 +38,19 @@ namespace Hammock
         private const string EndStreamingContent = "END STREAMING";
 
         public virtual string Authority { get; set; }
-        
+
         public virtual event EventHandler<FileProgressEventArgs> FileProgress;
-        public virtual void OnFileProgress(FileProgressEventArgs args)
-        {
+        public virtual void OnFileProgress(FileProgressEventArgs args) {
             var handler = FileProgress;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, args);
             }
         }
 
         public virtual event EventHandler<RetryEventArgs> BeforeRetry;
-        public virtual void OnBeforeRetry(RetryEventArgs args)
-        {
+        public virtual void OnBeforeRetry(RetryEventArgs args) {
             var handler = BeforeRetry;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, args);
             }
         }
@@ -99,8 +93,7 @@ namespace Hammock
 #if !Silverlight
 
 #if NET40
-        public RestResponse<dynamic> RequestDynamic(RestRequest request)
-        {
+        public RestResponse<dynamic> RequestDynamic(RestRequest request) {
             var query = RequestImpl(request);
 
             dynamic response = BuildResponseFromResultDynamic<DynamicObject>(request, query);
@@ -109,29 +102,25 @@ namespace Hammock
         }
 #endif
 
-        public virtual RestResponse Request(RestRequest request)
-        {
+        public virtual RestResponse Request(RestRequest request) {
             var query = RequestImpl(request);
 
             return BuildResponseFromResult(request, query);
         }
 
-        public virtual RestResponse<T> Request<T>(RestRequest request)
-        {
+        public virtual RestResponse<T> Request<T>(RestRequest request) {
             var query = RequestImpl(request);
 
             return BuildResponseFromResult<T>(request, query);
         }
 
-        public RestResponse Request()
-        {
+        public RestResponse Request() {
             var query = RequestImpl(null);
 
             return BuildResponseFromResult(null, query);
         }
 
-        public RestResponse<T> Request<T>()
-        {
+        public RestResponse<T> Request<T>() {
             var query = RequestImpl(null);
 
             return BuildResponseFromResult<T>(null, query);
@@ -139,28 +128,23 @@ namespace Hammock
 
         private static bool _mockFactoryInitialized;
 
-        private WebQuery RequestImpl(RestRequest request)
-        {
+        private WebQuery RequestImpl(RestRequest request) {
             Uri uri;
             WebQuery query = null;
 
             var retryPolicy = GetRetryPolicy(request);
-            if (_firstTry)
-            {
+            if (_firstTry) {
                 _remainingRetries = (retryPolicy != null ? retryPolicy.RetryCount : 0) + 1;
                 _firstTry = false;
             }
 
-            while (_remainingRetries > 0)
-            {
+            while (_remainingRetries > 0) {
                 request = PrepareRequest(request, out uri, out query);
 
                 var url = uri.ToString();
 
-                if (RequestExpectsMock(request))
-                {
-                    if (!_mockFactoryInitialized)
-                    {
+                if (RequestExpectsMock(request)) {
+                    if (!_mockFactoryInitialized) {
                         WebRequest.RegisterPrefix(MockProtocol, new MockWebRequestFactory());
                         _mockFactoryInitialized = true;
                     }
@@ -172,35 +156,29 @@ namespace Hammock
 
                 WebException exception;
                 if (!RequestWithCache(request, query, url, out exception) &&
-                    !RequestMultiPart(request, query, url, out exception))
-                {
+                    !RequestMultiPart(request, query, url, out exception)) {
                     query.Request(url, out exception);
                 }
 
                 query.Result.Exception = exception;
                 var current = query.Result;
 
-                if (retryPolicy != null)
-                {
+                if (retryPolicy != null) {
                     var retry = _remainingRetries > 0 && ShouldRetry(retryPolicy, exception, current);
 
-                    if (retry)
-                    {
+                    if (retry) {
                         _remainingRetries--;
-                        if (_remainingRetries > 0)
-                        {
+                        if (_remainingRetries > 0) {
                             query.Result = new WebQueryResult { TimesTried = GetIterationCount(request) };
 
                             OnBeforeRetry(new RetryEventArgs { Client = this, Request = request });
                         }
                     }
-                    else
-                    {
+                    else {
                         _remainingRetries = 0;
                     }
                 }
-                else
-                {
+                else {
                     _remainingRetries = 0;
                 }
             }
@@ -209,8 +187,7 @@ namespace Hammock
             return query;
         }
 
-        private RestRequest PrepareRequest(RestRequest request, out Uri uri, out WebQuery query)
-        {
+        private RestRequest PrepareRequest(RestRequest request, out Uri uri, out WebQuery query) {
             request = request ?? new RestRequest();
             uri = request.BuildEndpoint(this);
             query = GetQueryFor(request, uri);
@@ -218,11 +195,9 @@ namespace Hammock
             return request;
         }
 
-        private bool RequestMultiPart(RestBase request, WebQuery query, string url, out WebException exception)
-        {
+        private bool RequestMultiPart(RestBase request, WebQuery query, string url, out WebException exception) {
             var parameters = GetPostParameters(request);
-            if (parameters == null || parameters.Count() == 0)
-            {
+            if (parameters == null || parameters.Count() == 0) {
                 exception = null;
                 return false;
             }
@@ -233,18 +208,15 @@ namespace Hammock
             return true;
         }
 
-        private bool RequestWithCache(RestBase request, WebQuery query, string url, out WebException exception)
-        {
+        private bool RequestWithCache(RestBase request, WebQuery query, string url, out WebException exception) {
             var cache = GetCache(request);
-            if (cache == null)
-            {
+            if (cache == null) {
                 exception = null;
                 return false;
             }
 
             var options = GetCacheOptions(request);
-            if (options == null)
-            {
+            if (options == null) {
                 exception = null;
                 return false;
             }
@@ -253,8 +225,7 @@ namespace Hammock
             var function = GetCacheKeyFunction(request);
             var key = function != null ? function.Invoke() : "";
 
-            switch (options.Mode)
-            {
+            switch (options.Mode) {
                 case CacheMode.NoExpiration:
                     query.Request(url, key, cache, out exception);
                     break;
@@ -272,22 +243,18 @@ namespace Hammock
             return true;
         }
 #endif
-        private void UpdateRepeatingRequestState(RestBase request)
-        {
+        private void UpdateRepeatingRequestState(RestBase request) {
             var taskState = request.TaskState ?? TaskState;
-            if (taskState == null)
-            {
+            if (taskState == null) {
                 return;
             }
             taskState.RepeatCount++;
             taskState.LastRepeat = DateTime.Now;
         }
 
-        private void UpdateRetryState(RestBase request)
-        {
+        private void UpdateRetryState(RestBase request) {
             var retryState = request.RetryState ?? RetryState;
-            if (retryState == null)
-            {
+            if (retryState == null) {
                 return;
             }
 
@@ -297,32 +264,25 @@ namespace Hammock
 
         private static bool ShouldRetry(RetryPolicy retryPolicy,
                                         WebException exception,
-                                        WebQueryResult current)
-        {
+                                        WebQueryResult current) {
             var retry = false;
-            foreach (var condition in retryPolicy.RetryConditions.OfType<RetryErrorCondition>())
-            {
-                if (exception == null)
-                {
+            foreach (var condition in retryPolicy.RetryConditions.OfType<RetryErrorCondition>()) {
+                if (exception == null) {
                     continue;
                 }
                 retry |= condition.RetryIf(exception);
             }
 
-            foreach (var condition in retryPolicy.RetryConditions.OfType<RetryResultCondition>())
-            {
-                if (current == null)
-                {
+            foreach (var condition in retryPolicy.RetryConditions.OfType<RetryResultCondition>()) {
+                if (current == null) {
                     continue;
                 }
                 retry |= condition.RetryIf(current);
             }
 
-            foreach (var condition in retryPolicy.RetryConditions.OfType<IRetryCustomCondition>())
-            {
+            foreach (var condition in retryPolicy.RetryConditions.OfType<IRetryCustomCondition>()) {
                 var innerType = condition.GetDeclaredTypeForGeneric(typeof(IRetryCondition<>));
-                if (innerType == null)
-                {
+                if (innerType == null) {
                     continue;
                 }
 
@@ -335,8 +295,7 @@ namespace Hammock
                 */
 
                 var func = condition.GetValue("ConditionFunction") as MulticastDelegate;
-                if (func == null)
-                {
+                if (func == null) {
                     continue;
                 }
 
@@ -362,30 +321,24 @@ namespace Hammock
 
         private string BuildMockRequestUrl(RestRequest request,
                                            WebQuery query,
-                                           string url)
-        {
-            if (url.Contains("https"))
-            {
+                                           string url) {
+            if (url.Contains("https")) {
                 url = url.Replace("https", MockProtocol);
 
                 query.Parameters.Add(MockScheme, "https");
             }
-            if (url.Contains("http"))
-            {
+            if (url.Contains("http")) {
                 url = url.Replace("http", MockProtocol);
                 query.Parameters.Add(MockScheme, "http");
             }
 
-            if (request.ExpectStatusCode.HasValue)
-            {
+            if (request.ExpectStatusCode.HasValue) {
                 query.Parameters.Add("mockStatusCode", ((int)request.ExpectStatusCode.Value).ToString());
-                if (request.ExpectStatusDescription.IsNullOrBlank())
-                {
+                if (request.ExpectStatusDescription.IsNullOrBlank()) {
                     query.Parameters.Add(MockStatusDescription, request.ExpectStatusCode.ToString());
                 }
             }
-            if (!request.ExpectStatusDescription.IsNullOrBlank())
-            {
+            if (!request.ExpectStatusDescription.IsNullOrBlank()) {
                 query.Parameters.Add(MockStatusDescription, request.ExpectStatusDescription);
             }
 
@@ -394,16 +347,13 @@ namespace Hammock
                 );
 
             var expectEntity = SerializeExpectEntity(request);
-            if (expectEntity != null)
-            {
+            if (expectEntity != null) {
                 query.Parameters.Add(MockContent, expectEntity.Content);
                 query.Parameters.Add(MockContentType, expectEntity.ContentType);
                 query.HasEntity = true; // Used with POSTs
             }
-            else
-            {
-                if (!request.ExpectContent.IsNullOrBlank())
-                {
+            else {
+                if (!request.ExpectContent.IsNullOrBlank()) {
                     query.Parameters.Add(MockContent, request.ExpectContent);
                     query.Parameters.Add(MockContentType,
                                          !request.ExpectContentType.IsNullOrBlank()
@@ -411,10 +361,8 @@ namespace Hammock
                                              : "text/html"
                         );
                 }
-                else
-                {
-                    if (!request.ExpectContentType.IsNullOrBlank())
-                    {
+                else {
+                    if (!request.ExpectContentType.IsNullOrBlank()) {
                         query.Parameters.Add(
                             MockContentType, request.ExpectContentType
                             );
@@ -422,18 +370,15 @@ namespace Hammock
                 }
             }
 
-            if (request.ExpectHeaders.Count > 0)
-            {
+            if (request.ExpectHeaders.Count > 0) {
                 var names = new StringBuilder();
                 var values = new StringBuilder();
                 var count = 0;
-                foreach (var key in request.ExpectHeaders.AllKeys)
-                {
+                foreach (var key in request.ExpectHeaders.AllKeys) {
                     names.Append(key);
                     values.Append(request.ExpectHeaders[key].Value);
                     count++;
-                    if (count < request.ExpectHeaders.Count)
-                    {
+                    if (count < request.ExpectHeaders.Count) {
                         names.Append(",");
                         values.Append(",");
                     }
@@ -446,8 +391,7 @@ namespace Hammock
             return url;
         }
 
-        private static bool RequestExpectsMock(RestRequest request)
-        {
+        private static bool RequestExpectsMock(RestRequest request) {
             return request.ExpectEntity != null ||
                    request.ExpectHeaders.Count > 0 ||
                    request.ExpectStatusCode.HasValue ||
@@ -456,84 +400,68 @@ namespace Hammock
                    !request.ExpectStatusDescription.IsNullOrBlank();
         }
 
-        private ICache GetCache(RestBase request)
-        {
+        private ICache GetCache(RestBase request) {
             return request.Cache ?? Cache;
         }
 
-        private IEnumerable<HttpPostParameter> GetPostParameters(RestBase request)
-        {
-            if (request.PostParameters != null)
-            {
-                foreach (var parameter in request.PostParameters)
-                {
+        private IEnumerable<HttpPostParameter> GetPostParameters(RestBase request) {
+            if (request.PostParameters != null) {
+                foreach (var parameter in request.PostParameters) {
                     yield return parameter;
                 }
             }
 
-            if (PostParameters == null)
-            {
+            if (PostParameters == null) {
                 yield break;
             }
 
-            foreach (var parameter in PostParameters)
-            {
+            foreach (var parameter in PostParameters) {
                 yield return parameter;
             }
         }
 
-        private CacheOptions GetCacheOptions(RestBase request)
-        {
+        private CacheOptions GetCacheOptions(RestBase request) {
             return request.CacheOptions ?? CacheOptions;
         }
 
-        private Func<string> GetCacheKeyFunction(RestBase request)
-        {
+        private Func<string> GetCacheKeyFunction(RestBase request) {
             return request.CacheKeyFunction ?? CacheKeyFunction;
         }
 
-        private string GetProxy(RestBase request)
-        {
+        private string GetProxy(RestBase request) {
             return request.Proxy ?? Proxy;
         }
 
-        private string GetUserAgent(RestBase request)
-        {
+        private string GetUserAgent(RestBase request) {
             var userAgent = request.UserAgent.IsNullOrBlank()
                                 ? UserAgent
                                 : request.UserAgent;
             return userAgent;
         }
 
-        private ISerializer GetSerializer(RestBase request)
-        {
+        private ISerializer GetSerializer(RestBase request) {
             return request.Serializer ?? Serializer;
         }
 
-        private IWebCredentials GetWebCredentials(RestBase request)
-        {
+        private IWebCredentials GetWebCredentials(RestBase request) {
             var credentials = request.Credentials ?? Credentials;
             return credentials;
         }
 
-        private IWebQueryInfo GetInfo(RestBase request)
-        {
+        private IWebQueryInfo GetInfo(RestBase request) {
             var info = request.Info ?? Info;
             return info;
         }
 
-        private TimeSpan? GetTimeout(RestBase request)
-        {
+        private TimeSpan? GetTimeout(RestBase request) {
             return request.Timeout ?? Timeout;
         }
 
-        private DecompressionMethods? GetDecompressionMethods(RestBase request)
-        {
+        private DecompressionMethods? GetDecompressionMethods(RestBase request) {
             return request.DecompressionMethods ?? DecompressionMethods;
         }
 
-        private WebMethod GetWebMethod(RestBase request)
-        {
+        private WebMethod GetWebMethod(RestBase request) {
             var method = !request.Method.HasValue
                              ? !Method.HasValue
                                    ? WebMethod.Get
@@ -543,127 +471,105 @@ namespace Hammock
             return method;
         }
 
-        private byte[] GetPostContent(RestBase request)
-        {
+        private byte[] GetPostContent(RestBase request) {
             var content = request.PostContent ?? PostContent;
             return content;
         }
 
-        private RetryPolicy GetRetryPolicy(RestBase request)
-        {
+        private RetryPolicy GetRetryPolicy(RestBase request) {
             var policy = request.RetryPolicy ?? RetryPolicy;
             return policy;
         }
 
-        private Encoding GetEncoding(RestBase request)
-        {
+        private Encoding GetEncoding(RestBase request) {
             var encoding = request.Encoding ?? Encoding;
             return encoding;
         }
 
 #if !SILVERLIGHT
-        private bool GetFollowRedirects(RestBase request)
-        {
+        private bool GetFollowRedirects(RestBase request) {
             var redirects = request.FollowRedirects ?? FollowRedirects ?? false;
             return redirects;
         }
 #endif
 
-        private TaskOptions GetTaskOptions(RestBase request)
-        {
+        private TaskOptions GetTaskOptions(RestBase request) {
             var options = request.TaskOptions ?? TaskOptions;
             return options;
         }
 
-        private StreamOptions GetStreamOptions(RestBase request)
-        {
+        private StreamOptions GetStreamOptions(RestBase request) {
             var options = request.StreamOptions ?? StreamOptions;
             return options;
         }
 
-        private object GetTag(RestBase request)
-        {
+        private object GetTag(RestBase request) {
             var tag = request.Tag ?? Tag;
             return tag;
         }
 
 #if !WindowsPhone
-        public virtual IAsyncResult BeginRequest(RestRequest request, RestCallback callback, object userState)
-        {
+        public virtual IAsyncResult BeginRequest(RestRequest request, RestCallback callback, object userState) {
             return BeginRequestImpl(request, callback, null, null, false /* isInternal */, userState);
         }
 
-        public virtual IAsyncResult BeginRequest<T>(RestRequest request, RestCallback<T> callback, object userState)
-        {
+        public virtual IAsyncResult BeginRequest<T>(RestRequest request, RestCallback<T> callback, object userState) {
             return BeginRequestImpl(request, callback, null, null, false /* isInternal */, null);
         }
 
-        public IAsyncResult BeginRequest()
-        {
+        public IAsyncResult BeginRequest() {
             return BeginRequest(null /* request */, null /* callback */);
         }
 
-        public IAsyncResult BeginRequest<T>()
-        {
+        public IAsyncResult BeginRequest<T>() {
             return BeginRequest(null /* request */, null /* callback */);
         }
 
 #if NET40
-        public IAsyncResult BeginRequestDynamic()
-        {
+        public IAsyncResult BeginRequestDynamic() {
             return BeginRequestDynamic(null /* request */, null /* callback */);
         }
 #endif
 
-        public virtual IAsyncResult BeginRequest(RestRequest request, RestCallback callback)
-        {
+        public virtual IAsyncResult BeginRequest(RestRequest request, RestCallback callback) {
             return BeginRequestImpl(request, callback, null, null, false /* isInternal */, null);
         }
 
-        public virtual IAsyncResult BeginRequest<T>(RestRequest request, RestCallback<T> callback)
-        {
+        public virtual IAsyncResult BeginRequest<T>(RestRequest request, RestCallback<T> callback) {
             return BeginRequestImpl(request, callback, null, null, false /* isInternal */, null);
         }
-        
+
 #if NET40
-        public virtual IAsyncResult BeginRequestDynamic(RestRequest request, RestCallback<DynamicObject> callback)
-        {
+        public virtual IAsyncResult BeginRequestDynamic(RestRequest request, RestCallback<DynamicObject> callback) {
             return BeginRequestImplDynamic(request, callback, null, null, false /* isInternal */, null);
         }
-        
-        public virtual IAsyncResult BeginRequestDynamic(RestRequest request, RestCallback<DynamicObject> callback, object userState)
-        {
+
+        public virtual IAsyncResult BeginRequestDynamic(RestRequest request, RestCallback<DynamicObject> callback, object userState) {
             return BeginRequestImplDynamic(request, callback, null, null, false /* isInternal */, userState);
         }
 #endif
 
-        public virtual IAsyncResult BeginRequest(RestCallback callback)
-        {
+        public virtual IAsyncResult BeginRequest(RestCallback callback) {
             return BeginRequestImpl(null, callback, null, null, false /* isInternal */, null);
         }
 
-        public virtual IAsyncResult BeginRequest(RestRequest request)
-        {
+        public virtual IAsyncResult BeginRequest(RestRequest request) {
             return BeginRequest(request, null, null);
         }
 
-        public IAsyncResult BeginRequest(RestRequest request, object userState)
-        {
+        public IAsyncResult BeginRequest(RestRequest request, object userState) {
             return BeginRequest(request, null, userState);
         }
 
-        public virtual IAsyncResult BeginRequest<T>(RestRequest request)
-        {
+        public virtual IAsyncResult BeginRequest<T>(RestRequest request) {
             return BeginRequest<T>(request, null, null);
         }
 
-        public IAsyncResult BeginRequest<T>(RestRequest request, object userState)
-        {
+        public IAsyncResult BeginRequest<T>(RestRequest request, object userState) {
             return BeginRequest<T>(request, null, userState);
         }
 
-        public virtual IAsyncResult BeginRequest<T>(RestCallback<T> callback)
-        {
+        public virtual IAsyncResult BeginRequest<T>(RestCallback<T> callback) {
             return BeginRequest(null, callback, null);
         }
 #else
@@ -729,8 +635,7 @@ namespace Hammock
 #endif
 
 #if !WindowsPhone
-        public virtual RestResponse EndRequest(IAsyncResult result)
-        {
+        public virtual RestResponse EndRequest(IAsyncResult result) {
 #if !Mono
             var webResult = EndRequestImpl(result);
 #else
@@ -739,14 +644,12 @@ namespace Hammock
             return webResult.AsyncState as RestResponse;
         }
 
-        public virtual RestResponse EndRequest(IAsyncResult result, TimeSpan timeout)
-        {
+        public virtual RestResponse EndRequest(IAsyncResult result, TimeSpan timeout) {
             var webResult = EndRequestImpl(result, timeout);
             return webResult.AsyncState as RestResponse;
         }
 
-        public virtual RestResponse<T> EndRequest<T>(IAsyncResult result)
-        {
+        public virtual RestResponse<T> EndRequest<T>(IAsyncResult result) {
 #if !Mono
             var webResult = EndRequestImpl<T>(result);
 #else
@@ -756,8 +659,7 @@ namespace Hammock
         }
 
 #if NET40
-        public virtual RestResponse<T> EndRequestDynamic<T>(IAsyncResult result) where T : DynamicObject
-        {
+        public virtual RestResponse<T> EndRequestDynamic<T>(IAsyncResult result) where T : DynamicObject {
 #if !Mono
             var webResult = EndRequestImplDynamic<T>(result);
 #else
@@ -767,56 +669,46 @@ namespace Hammock
         }
 #endif
 
-        public virtual RestResponse<T> EndRequest<T>(IAsyncResult result, TimeSpan timeout)
-        {
+        public virtual RestResponse<T> EndRequest<T>(IAsyncResult result, TimeSpan timeout) {
             var webResult = EndRequestImpl<T>(result, timeout);
             return webResult.AsyncState as RestResponse<T>;
         }
 
 #if !Mono
-        private WebQueryAsyncResult EndRequestImpl(IAsyncResult result, TimeSpan? timeout = null)
-		{
+        private WebQueryAsyncResult EndRequestImpl(IAsyncResult result, TimeSpan? timeout = null) {
 #else
 		private WebQueryAsyncResult EndRequestImpl(IAsyncResult result, TimeSpan? timeout)
 		{					
 #endif
             var webResult = result as WebQueryAsyncResult;
-            if (webResult == null)
-            {
+            if (webResult == null) {
                 throw new InvalidOperationException("The IAsyncResult provided was not for this operation.");
             }
 
             var tag = (Triplet<RestRequest, RestCallback, object>)webResult.Tag;
 
-            if (RequestExpectsMock(tag.First))
-            {
+            if (RequestExpectsMock(tag.First)) {
                 // [DC]: Mock results come via InnerResult
                 webResult = (WebQueryAsyncResult)webResult.InnerResult;
             }
 
-            if (webResult.CompletedSynchronously)
-            {
+            if (webResult.CompletedSynchronously) {
                 var query = webResult.AsyncState as WebQuery;
-                if (query != null)
-                {
+                if (query != null) {
                     // [DC]: From cache
                     CompleteWithQuery(query, tag.First, tag.Second, webResult);
                 }
-                else
-                {
+                else {
                     // [DC]: From mocks
                     webResult = CompleteWithMockWebResponse(result, webResult, tag);
                 }
             }
 
-            if (!webResult.IsCompleted)
-            {
-                if(timeout.HasValue)
-                {
+            if (!webResult.IsCompleted) {
+                if (timeout.HasValue) {
                     webResult.AsyncWaitHandle.WaitOne(timeout.Value);
                 }
-                else
-                {
+                else {
                     webResult.AsyncWaitHandle.WaitOne();
                 }
             }
@@ -828,44 +720,36 @@ namespace Hammock
 #else
 		private WebQueryAsyncResult EndRequestImpl<T>(IAsyncResult result, TimeSpan? timeout)
 #endif
-        {
+ {
             var webResult = result as WebQueryAsyncResult;
-            if (webResult == null)
-            {
+            if (webResult == null) {
                 throw new InvalidOperationException("The IAsyncResult provided was not for this operation.");
             }
 
             var tag = (Triplet<RestRequest, RestCallback<T>, object>)webResult.Tag;
 
-            if (RequestExpectsMock(tag.First))
-            {
+            if (RequestExpectsMock(tag.First)) {
                 // [DC]: Mock results come via InnerResult
                 webResult = (WebQueryAsyncResult)webResult.InnerResult;
             }
 
-            if (webResult.CompletedSynchronously)
-            {
+            if (webResult.CompletedSynchronously) {
                 var query = webResult.AsyncState as WebQuery;
-                if (query != null)
-                {
+                if (query != null) {
                     // [DC]: From cache
                     CompleteWithQuery(query, tag.First, tag.Second, webResult);
                 }
-                else
-                {
+                else {
                     // [DC]: From mocks
                     webResult = CompleteWithMockWebResponse(result, webResult, tag);
                 }
             }
 
-            if (!webResult.IsCompleted)
-            {
-                if(timeout.HasValue)
-                {
+            if (!webResult.IsCompleted) {
+                if (timeout.HasValue) {
                     webResult.AsyncWaitHandle.WaitOne(timeout.Value);
                 }
-                else
-                {
+                else {
                     webResult.AsyncWaitHandle.WaitOne();
                 }
             }
@@ -874,49 +758,41 @@ namespace Hammock
 #endif
 
 #if NET40
-#if !Mono 
+#if !Mono
         private WebQueryAsyncResult EndRequestImplDynamic<T>(IAsyncResult result, TimeSpan? timeout = null) where T : DynamicObject
 #else
 		private WebQueryAsyncResult EndRequestImplDynamic<T>(IAsyncResult result, TimeSpan? timeout) where T : DynamicObject
 #endif
-        {
+ {
             var webResult = result as WebQueryAsyncResult;
-            if (webResult == null)
-            {
+            if (webResult == null) {
                 throw new InvalidOperationException("The IAsyncResult provided was not for this operation.");
             }
 
-            var tag = (Triplet<RestRequest, RestCallback<T>, object>) webResult.Tag;
+            var tag = (Triplet<RestRequest, RestCallback<T>, object>)webResult.Tag;
 
-            if (RequestExpectsMock(tag.First))
-            {
+            if (RequestExpectsMock(tag.First)) {
                 // [DC]: Mock results come via InnerResult
-                webResult = (WebQueryAsyncResult) webResult.InnerResult;
+                webResult = (WebQueryAsyncResult)webResult.InnerResult;
             }
 
-            if (webResult.CompletedSynchronously)
-            {
+            if (webResult.CompletedSynchronously) {
                 var query = webResult.AsyncState as WebQuery;
-                if (query != null)
-                {
+                if (query != null) {
                     // [DC]: From cache
                     CompleteWithQueryDynamic(query, tag.First, tag.Second, webResult);
                 }
-                else
-                {
+                else {
                     // [DC]: From mocks
                     webResult = CompleteWithMockWebResponse(result, webResult, tag);
                 }
             }
 
-            if (!webResult.IsCompleted)
-            {
-                if(timeout.HasValue)
-                {
+            if (!webResult.IsCompleted) {
+                if (timeout.HasValue) {
                     webResult.AsyncWaitHandle.WaitOne(timeout.Value);
                 }
-                else
-                {
+                else {
                     webResult.AsyncWaitHandle.WaitOne();
                 }
             }
@@ -927,49 +803,41 @@ namespace Hammock
         private WebQueryAsyncResult CompleteWithMockWebResponse<T>(
             IAsyncResult result,
             IAsyncResult webResult,
-            Triplet<RestRequest, RestCallback<T>, object> tag)
-        {
+            Triplet<RestRequest, RestCallback<T>, object> tag) {
             var webResponse = (WebResponse)webResult.AsyncState;
             var restRequest = tag.First;
             var userState = tag.Third;
 
             var m = new MemoryStream();
-            using (var stream = webResponse.GetResponseStream())
-            {
-                if (stream != null)
-                {
-                    using (var reader = new StreamReader(stream))
-                    {
-                        while (reader.Peek() >= 0)
-                        {
-                            m.WriteByte((byte) reader.Read());
+            using (var stream = webResponse.GetResponseStream()) {
+                if (stream != null) {
+                    using (var reader = new StreamReader(stream)) {
+                        while (reader.Peek() >= 0) {
+                            m.WriteByte((byte)reader.Read());
                         }
                     }
                 }
             }
             m.Position = 0;
-            
-            var restResponse = new RestResponse<T>
-                                   {
-                                       ContentStream = m,
-                                       ContentType = webResponse.ContentType,
-                                       ContentLength = webResponse.ContentLength,
-                                       StatusCode = restRequest.ExpectStatusCode.HasValue
-                                                        ? restRequest.ExpectStatusCode.Value
-                                                        : 0,
-                                       StatusDescription = restRequest.ExpectStatusDescription,
-                                       ResponseUri = webResponse.ResponseUri,
-                                       IsMock = true
-                                   };
 
-            foreach (var key in webResponse.Headers.AllKeys)
-            {
+            var restResponse = new RestResponse<T> {
+                ContentStream = m,
+                ContentType = webResponse.ContentType,
+                ContentLength = webResponse.ContentLength,
+                StatusCode = restRequest.ExpectStatusCode.HasValue
+                                 ? restRequest.ExpectStatusCode.Value
+                                 : 0,
+                StatusDescription = restRequest.ExpectStatusDescription,
+                ResponseUri = webResponse.ResponseUri,
+                IsMock = true
+            };
+
+            foreach (var key in webResponse.Headers.AllKeys) {
                 restResponse.Headers.Add(key, webResponse.Headers[key]);
             }
 
             var deserializer = restRequest.Deserializer ?? Deserializer;
-            if (deserializer != null && !restResponse.Content.IsNullOrBlank())
-            {
+            if (deserializer != null && !restResponse.Content.IsNullOrBlank()) {
                 restResponse.ContentEntity = deserializer.Deserialize<T>(restResponse);
             }
 
@@ -980,8 +848,7 @@ namespace Hammock
             parentResult.IsCompleted = true;
 
             var callback = tag.Second;
-            if (callback != null)
-            {
+            if (callback != null) {
                 callback.Invoke(restRequest, restResponse, userState);
             }
             parentResult.Signal();
@@ -991,49 +858,41 @@ namespace Hammock
         private WebQueryAsyncResult CompleteWithMockWebResponse(
             IAsyncResult result,
             IAsyncResult webResult,
-            Triplet<RestRequest, RestCallback, object> tag)
-        {
+            Triplet<RestRequest, RestCallback, object> tag) {
             var webResponse = (WebResponse)webResult.AsyncState;
             var restRequest = tag.First;
             var userState = tag.Third;
 
             var m = new MemoryStream();
-            using (var stream = webResponse.GetResponseStream())
-            {
-                if (stream != null)
-                {
-                    using (var reader = new StreamReader(stream))
-                    {
-                        while (reader.Peek() >= 0)
-                        {
-                            m.WriteByte((byte) reader.Read());
+            using (var stream = webResponse.GetResponseStream()) {
+                if (stream != null) {
+                    using (var reader = new StreamReader(stream)) {
+                        while (reader.Peek() >= 0) {
+                            m.WriteByte((byte)reader.Read());
                         }
                     }
                 }
             }
             m.Position = 0;
 
-            var restResponse = new RestResponse
-                                   {
-                                       ContentStream = m,
-                                       ContentType = webResponse.ContentType,
-                                       ContentLength = webResponse.ContentLength,
-                                       StatusCode = restRequest.ExpectStatusCode.HasValue
-                                                        ? restRequest.ExpectStatusCode.Value
-                                                        : 0,
-                                       StatusDescription = restRequest.ExpectStatusDescription,
-                                       ResponseUri = webResponse.ResponseUri,
-                                       IsMock = true
-                                   };
+            var restResponse = new RestResponse {
+                ContentStream = m,
+                ContentType = webResponse.ContentType,
+                ContentLength = webResponse.ContentLength,
+                StatusCode = restRequest.ExpectStatusCode.HasValue
+                                 ? restRequest.ExpectStatusCode.Value
+                                 : 0,
+                StatusDescription = restRequest.ExpectStatusDescription,
+                ResponseUri = webResponse.ResponseUri,
+                IsMock = true
+            };
 
-            foreach (var key in webResponse.Headers.AllKeys)
-            {
+            foreach (var key in webResponse.Headers.AllKeys) {
                 restResponse.Headers.Add(key, webResponse.Headers[key]);
             }
 
             var deserializer = restRequest.Deserializer ?? Deserializer;
-            if (deserializer != null && !restResponse.Content.IsNullOrBlank() && restRequest.ResponseEntityType != null)
-            {
+            if (deserializer != null && !restResponse.Content.IsNullOrBlank() && restRequest.ResponseEntityType != null) {
                 restResponse.ContentEntity = deserializer.Deserialize(restResponse, restRequest.ResponseEntityType);
             }
 
@@ -1044,24 +903,21 @@ namespace Hammock
             parentResult.IsCompleted = true;
 
             var callback = tag.Second;
-            if (callback != null)
-            {
+            if (callback != null) {
                 callback.Invoke(restRequest, restResponse, userState);
             }
             parentResult.Signal();
             return parentResult;
         }
 
-        private static void TraceResponseWithMock(RestResponseBase restResponse)
-        {
+        private static void TraceResponseWithMock(RestResponseBase restResponse) {
 #if TRACE
             Trace.WriteLine(String.Concat(
                 "RESPONSE: ", restResponse.StatusCode, " ", restResponse.StatusDescription)
                 );
             Trace.WriteLineIf(restResponse.Headers.AllKeys.Count() > 0, "HEADERS:");
             foreach (var trace in restResponse.Headers.AllKeys.Select(
-                key => String.Concat("\t", key, ": ", restResponse.Headers[key])))
-            {
+                key => String.Concat("\t", key, ": ", restResponse.Headers[key]))) {
                 Trace.WriteLine(trace);
             }
             Trace.WriteLine(String.Concat(
@@ -1077,11 +933,9 @@ namespace Hammock
                                           WebQuery query,
                                           string url,
                                           bool isInternal,
-                                          object userState)
-        {
+                                          object userState) {
             request = request ?? new RestRequest();
-            if (!isInternal)
-            {
+            if (!isInternal) {
                 // [DC]: Recursive call possible, only do this once
                 var uri = request.BuildEndpoint(this);
                 query = GetQueryFor(request, uri);
@@ -1089,15 +943,13 @@ namespace Hammock
                 url = uri.ToString();
             }
 
-            if (RequestExpectsMock(request))
-            {
+            if (RequestExpectsMock(request)) {
                 url = BuildMockRequestUrl(request, query, url);
             }
 
             var retryPolicy = GetRetryPolicy(request);
             bool inRetryScope = false;
-            if (!isInternal && retryPolicy != null)
-            {
+            if (!isInternal && retryPolicy != null) {
                 _remainingRetries = retryPolicy.RetryCount;
                 inRetryScope = true;
             }
@@ -1106,8 +958,7 @@ namespace Hammock
             WebQueryAsyncResult asyncResult;
 
             var streamOptions = GetStreamOptions(request);
-            if (streamOptions != null)
-            {
+            if (streamOptions != null) {
 #if !SILVERLIGHT
                 query.KeepAlive = true;
 #endif
@@ -1125,8 +976,7 @@ namespace Hammock
 
                 asyncResult = beginRequest.Invoke();
             }
-            else
-            {
+            else {
                 beginRequest
                = () => BeginRequestFunction(isInternal,
                        request,
@@ -1138,50 +988,41 @@ namespace Hammock
                 asyncResult = beginRequest.Invoke();
             }
 
-            if (isInternal || (request.TaskOptions == null || request.TaskOptions.RepeatInterval.TotalMilliseconds == 0))
-            {
-                if (IsFirstIteration && request.IsFirstIteration)
-                {
-                    query.QueryResponse += (sender, args) =>
-                                               {
-                                                   var current = query.Result;
+            if (isInternal || (request.TaskOptions == null || request.TaskOptions.RepeatInterval.TotalMilliseconds == 0)) {
+                if (IsFirstIteration && request.IsFirstIteration) {
+                    query.QueryResponse += (sender, args) => {
+                        var current = query.Result;
 
-                                                   if (retryPolicy != null)
-                                                   {
-                                                       // [DC]: Query should already have exception applied
-                                                       var exception = query.Result.Exception;
-                                                       var retry = inRetryScope &&
-                                                                   _remainingRetries > 0 &&
-                                                                   ShouldRetry(retryPolicy, exception, current);
+                        if (retryPolicy != null) {
+                            // [DC]: Query should already have exception applied
+                            var exception = query.Result.Exception;
+                            var retry = inRetryScope &&
+                                        _remainingRetries > 0 &&
+                                        ShouldRetry(retryPolicy, exception, current);
 
-                                                       if (retry)
-                                                       {
-                                                           UpdateRetryState(request);
-                                                           BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
-                                                           Interlocked.Decrement(ref _remainingRetries);
-                                                           if(_remainingRetries > 0)
-                                                           {
-                                                               OnBeforeRetry(new RetryEventArgs { Client = this, Request = request });
-                                                           }
-                                                       }
-                                                       else if (inRetryScope)
-                                                       {
-                                                           _remainingRetries = 0;
-                                                       }
-                                                       current.TimesTried = GetIterationCount(request);
-                                                   }
-                                                   else if (inRetryScope)
-                                                   {
-                                                       _remainingRetries = 0;
-                                                   }
+                            if (retry) {
+                                UpdateRetryState(request);
+                                BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
+                                Interlocked.Decrement(ref _remainingRetries);
+                                if (_remainingRetries > 0) {
+                                    OnBeforeRetry(new RetryEventArgs { Client = this, Request = request });
+                                }
+                            }
+                            else if (inRetryScope) {
+                                _remainingRetries = 0;
+                            }
+                            current.TimesTried = GetIterationCount(request);
+                        }
+                        else if (inRetryScope) {
+                            _remainingRetries = 0;
+                        }
 
-                                                   query.Result = current;
+                        query.Result = current;
 
-                                                   if (_remainingRetries == 0)
-                                                   {
-                                                       CompleteWithQuery(query, request, callback, asyncResult);
-                                                   }
-                                               };
+                        if (_remainingRetries == 0) {
+                            CompleteWithQuery(query, request, callback, asyncResult);
+                        }
+                    };
                 }
                 UpdateRepeatingRequestState(request);
             }
@@ -1195,26 +1036,22 @@ namespace Hammock
                                                         WebQuery query,
                                                         string url,
                                                         bool isInternal,
-                                                        object userState) where T : DynamicObject
-        {
+                                                        object userState) where T : DynamicObject {
             request = request ?? new RestRequest();
-            if (!isInternal)
-            {
+            if (!isInternal) {
                 var uri = request.BuildEndpoint(this);
                 query = GetQueryFor(request, uri);
                 SetQueryMeta(request, query);
                 url = uri.ToString();
             }
 
-            if (RequestExpectsMock(request))
-            {
+            if (RequestExpectsMock(request)) {
                 url = BuildMockRequestUrl(request, query, url);
             }
 
             var retryPolicy = GetRetryPolicy(request);
             bool inRetryScope = false;
-            if (!isInternal && retryPolicy != null)
-            {
+            if (!isInternal && retryPolicy != null) {
                 _remainingRetries = retryPolicy.RetryCount;
                 inRetryScope = true;
             }
@@ -1223,8 +1060,7 @@ namespace Hammock
             WebQueryAsyncResult asyncResult;
 
             var streamOptions = GetStreamOptions(request);
-            if (streamOptions != null)
-            {
+            if (streamOptions != null) {
 #if !SILVERLIGHT
                 query.KeepAlive = true;
 #endif
@@ -1243,56 +1079,46 @@ namespace Hammock
 
                 asyncResult = beginRequest.Invoke();
             }
-            else
-            {
+            else {
                 beginRequest = () => BeginRequestFunction(
                    isInternal, request, query, url, callback, userState
                    );
 
                 asyncResult = beginRequest.Invoke();
             }
-            if (isInternal || (request.TaskOptions == null || request.TaskOptions.RepeatInterval.TotalMilliseconds == 0))
-            {
-                if (IsFirstIteration && request.IsFirstIteration)
-                {
-                    query.QueryResponse += (sender, args) =>
-                    {
+            if (isInternal || (request.TaskOptions == null || request.TaskOptions.RepeatInterval.TotalMilliseconds == 0)) {
+                if (IsFirstIteration && request.IsFirstIteration) {
+                    query.QueryResponse += (sender, args) => {
                         var current = query.Result;
 
-                        if (retryPolicy != null)
-                        {
+                        if (retryPolicy != null) {
                             // [DC]: Query should already have exception applied
                             var exception = query.Result.Exception;
                             var retry = inRetryScope &&
                                         _remainingRetries > 0 &&
                                         ShouldRetry(retryPolicy, exception, current);
 
-                            if (retry)
-                            {
+                            if (retry) {
                                 UpdateRetryState(request);
                                 BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
                                 Interlocked.Decrement(ref _remainingRetries);
-                                if (_remainingRetries > 0)
-                                {
+                                if (_remainingRetries > 0) {
                                     OnBeforeRetry(new RetryEventArgs { Client = this, Request = request });
                                 }
                             }
-                            else if (inRetryScope)
-                            {
+                            else if (inRetryScope) {
                                 _remainingRetries = 0;
                             }
                             current.TimesTried = GetIterationCount(request);
                         }
-                        else if (inRetryScope)
-                        {
+                        else if (inRetryScope) {
                             _remainingRetries = 0;
                         }
 
                         query.Result = current;
 
                         // [DC]: Callback is for a final result, not a retry
-                        if (_remainingRetries == 0)
-                        {
+                        if (_remainingRetries == 0) {
                             CompleteWithQueryDynamic(query, request, callback, asyncResult);
                         }
                     };
@@ -1308,26 +1134,22 @@ namespace Hammock
                                                  WebQuery query,
                                                  string url,
                                                  bool isInternal,
-                                                 object userState)
-        {
+                                                 object userState) {
             request = request ?? new RestRequest();
-            if (!isInternal)
-            {
+            if (!isInternal) {
                 var uri = request.BuildEndpoint(this);
                 query = GetQueryFor(request, uri);
                 SetQueryMeta(request, query);
                 url = uri.ToString();
             }
 
-            if (RequestExpectsMock(request))
-            {
+            if (RequestExpectsMock(request)) {
                 url = BuildMockRequestUrl(request, query, url);
             }
 
             var retryPolicy = GetRetryPolicy(request);
             bool inRetryScope = false;
-            if (!isInternal && retryPolicy != null)
-            {
+            if (!isInternal && retryPolicy != null) {
                 _remainingRetries = retryPolicy.RetryCount;
                 inRetryScope = true;
             }
@@ -1336,8 +1158,7 @@ namespace Hammock
             WebQueryAsyncResult asyncResult;
 
             var streamOptions = GetStreamOptions(request);
-            if (streamOptions != null)
-            {
+            if (streamOptions != null) {
 #if !SILVERLIGHT
                 query.KeepAlive = true;
 #endif
@@ -1356,59 +1177,49 @@ namespace Hammock
 
                 asyncResult = beginRequest.Invoke();
             }
-            else
-            {
+            else {
                 beginRequest = () => BeginRequestFunction(
                    isInternal, request, query, url, callback, userState
                    );
 
                 asyncResult = beginRequest.Invoke();
             }
-            if (isInternal || (request.TaskOptions == null || request.TaskOptions.RepeatInterval.TotalMilliseconds == 0))
-            {
-                if (IsFirstIteration && request.IsFirstIteration)
-                {
-                    query.QueryResponse += (sender, args) =>
-                       {
-                           var current = query.Result;
+            if (isInternal || (request.TaskOptions == null || request.TaskOptions.RepeatInterval.TotalMilliseconds == 0)) {
+                if (IsFirstIteration && request.IsFirstIteration) {
+                    query.QueryResponse += (sender, args) => {
+                        var current = query.Result;
 
-                           if (retryPolicy != null)
-                           {
-                               // [DC]: Query should already have exception applied
-                               var exception = query.Result.Exception;
-                               var retry = inRetryScope &&
-                                           _remainingRetries > 0 &&
-                                           ShouldRetry(retryPolicy, exception, current);
+                        if (retryPolicy != null) {
+                            // [DC]: Query should already have exception applied
+                            var exception = query.Result.Exception;
+                            var retry = inRetryScope &&
+                                        _remainingRetries > 0 &&
+                                        ShouldRetry(retryPolicy, exception, current);
 
-                               if (retry)
-                               {
-                                   UpdateRetryState(request);
-                                   BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
-                                   Interlocked.Decrement(ref _remainingRetries);
-                                   if(_remainingRetries > 0)
-                                   {
-                                       OnBeforeRetry(new RetryEventArgs { Client = this, Request = request });
-                                   }
-                               }
-                               else if (inRetryScope)
-                               {
-                                   _remainingRetries = 0;
-                               }
-                               current.TimesTried = GetIterationCount(request);
-                           }
-                           else if (inRetryScope)
-                           {
-                               _remainingRetries = 0;
-                           }
+                            if (retry) {
+                                UpdateRetryState(request);
+                                BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
+                                Interlocked.Decrement(ref _remainingRetries);
+                                if (_remainingRetries > 0) {
+                                    OnBeforeRetry(new RetryEventArgs { Client = this, Request = request });
+                                }
+                            }
+                            else if (inRetryScope) {
+                                _remainingRetries = 0;
+                            }
+                            current.TimesTried = GetIterationCount(request);
+                        }
+                        else if (inRetryScope) {
+                            _remainingRetries = 0;
+                        }
 
-                           query.Result = current;
+                        query.Result = current;
 
-                           // [DC]: Callback is for a final result, not a retry
-                           if (_remainingRetries == 0)
-                           {
-                               CompleteWithQuery(query, request, callback, asyncResult);
-                           }
-                       };
+                        // [DC]: Callback is for a final result, not a retry
+                        if (_remainingRetries == 0) {
+                            CompleteWithQuery(query, request, callback, asyncResult);
+                        }
+                    };
                 }
                 UpdateRepeatingRequestState(request);
             }
@@ -1650,31 +1461,24 @@ namespace Hammock
                                                          WebQuery query,
                                                          string url,
                                                          RestCallback callback,
-                                                         object userState)
-        {
+                                                         object userState) {
             WebQueryAsyncResult result;
-            if (!isInternal)
-            {
-                if (!BeginRequestWithTask(request, callback, query, url, out result, userState))
-                {
-                    if (!BeginRequestWithCache(request, query, url, out result, userState))
-                    {
-                        if (!BeginRequestMultiPart(request, query, url, out result, userState))
-                        {
+            if (!isInternal) {
+                if (!BeginRequestWithTask(request, callback, query, url, out result, userState)) {
+                    if (!BeginRequestWithCache(request, query, url, out result, userState)) {
+                        if (!BeginRequestMultiPart(request, query, url, out result, userState)) {
                             // Normal operation
                             result = query.RequestAsync(url, userState);
                         }
                     }
                 }
             }
-            else
-            {
+            else {
                 // Normal operation
                 result = query.RequestAsync(url, userState);
             }
 
-            result.Tag = new Triplet<RestRequest, RestCallback, object>
-            {
+            result.Tag = new Triplet<RestRequest, RestCallback, object> {
                 First = request,
                 Second = callback,
                 Third = userState
@@ -1712,14 +1516,11 @@ namespace Hammock
         }
 #endif
 
-        private void SignalTasks(RestRequest request, WebQueryAsyncResult result)
-        {
+        private void SignalTasks(RestRequest request, WebQueryAsyncResult result) {
             // Recurring tasks are only signalled when cancelled 
             // or when they reach their iteration limit
-            lock (_timedTasksLock)
-            {
-                if (!_tasks.ContainsKey(request))
-                {
+            lock (_timedTasksLock) {
+                if (!_tasks.ContainsKey(request)) {
                     result.Signal();
                 }
             }
@@ -1731,8 +1532,7 @@ namespace Hammock
         private void CompleteWithQueryDynamic<T>(WebQuery query,
                                                  RestRequest request,
                                                  RestCallback<T> callback,
-                                                 WebQueryAsyncResult result) where T : DynamicObject
-        {
+                                                 WebQueryAsyncResult result) where T : DynamicObject {
             var response = BuildResponseFromResultDynamic<T>(request, query);
 
             CompleteWithQuery(request, query, callback, response, result);
@@ -1742,17 +1542,14 @@ namespace Hammock
         private void CompleteWithQuery<T>(WebQuery query,
                                           RestRequest request,
                                           RestCallback<T> callback,
-                                          WebQueryAsyncResult result)
-        {
+                                          WebQueryAsyncResult result) {
             var response = BuildResponseFromResult<T>(request, query);
 
             CompleteWithQuery(request, query, callback, response, result);
         }
 
-        private void CompleteWithQuery<T>(RestRequest request, WebQuery query, RestCallback<T> callback, RestResponse<T> response, WebQueryAsyncResult result)
-        {
-            if (query.IsStreaming && callback != null)
-            {
+        private void CompleteWithQuery<T>(RestRequest request, WebQuery query, RestCallback<T> callback, RestResponse<T> response, WebQueryAsyncResult result) {
+            if (query.IsStreaming && callback != null) {
                 callback.Invoke(request, response, query.UserState);
                 return;
             }
@@ -1761,13 +1558,11 @@ namespace Hammock
 
             result.AsyncState = response;
             result.IsCompleted = true;
-            if (callback != null && !wasStreaming)
-            {
+            if (callback != null && !wasStreaming) {
                 callback.Invoke(request, response, query.UserState);
             }
 
-            if (wasStreaming)
-            {
+            if (wasStreaming) {
                 _streamQuery = null;
             }
 
@@ -1777,11 +1572,9 @@ namespace Hammock
         private void CompleteWithQuery(WebQuery query,
                                        RestRequest request,
                                        RestCallback callback,
-                                       WebQueryAsyncResult result)
-        {
+                                       WebQueryAsyncResult result) {
             var response = BuildResponseFromResult(request, query);
-            if (query.IsStreaming && callback != null)
-            {
+            if (query.IsStreaming && callback != null) {
                 callback.Invoke(request, response, query.UserState);
                 return;
             }
@@ -1790,13 +1583,11 @@ namespace Hammock
 
             result.AsyncState = response;
             result.IsCompleted = true;
-            if (callback != null && !wasStreaming)
-            {
+            if (callback != null && !wasStreaming) {
                 callback.Invoke(request, response, query.UserState);
             }
 
-            if (wasStreaming)
-            {
+            if (wasStreaming) {
                 _streamQuery = null;
             }
 
@@ -1845,32 +1636,25 @@ namespace Hammock
                                                             WebQuery query,
                                                             string url,
                                                             RestCallback<T> callback,
-                                                            object userState)
-        {
+                                                            object userState) {
 
             WebQueryAsyncResult result;
-            if (!isInternal)
-            {
-                if (!BeginRequestWithTask(request, callback, query, url, out result, userState))
-                {
-                    if (!BeginRequestWithCache(request, query, url, out result, userState))
-                    {
-                        if (!BeginRequestMultiPart(request, query, url, out result, userState))
-                        {
+            if (!isInternal) {
+                if (!BeginRequestWithTask(request, callback, query, url, out result, userState)) {
+                    if (!BeginRequestWithCache(request, query, url, out result, userState)) {
+                        if (!BeginRequestMultiPart(request, query, url, out result, userState)) {
                             // Normal operation
                             result = query.RequestAsync(url, userState);
                         }
                     }
                 }
             }
-            else
-            {
+            else {
                 // Normal operation
                 result = query.RequestAsync(url, userState);
             }
 
-            result.Tag = new Triplet<RestRequest, RestCallback<T>, object>
-            {
+            result.Tag = new Triplet<RestRequest, RestCallback<T>, object> {
                 First = request,
                 Second = callback,
                 Third = userState
@@ -1913,12 +1697,10 @@ namespace Hammock
                                                                   RestCallback<T> callback,
                                                                   TimeSpan duration,
                                                                   int resultsPerCallback,
-                                                                  object userState)
-        {
+                                                                  object userState) {
             var result = GetStreamResult(request, query, url, duration, resultsPerCallback);
 
-            result.Tag = new Triplet<RestRequest, RestCallback<T>, object>
-            {
+            result.Tag = new Triplet<RestRequest, RestCallback<T>, object> {
                 First = request,
                 Second = callback,
                 Third = userState
@@ -1932,12 +1714,10 @@ namespace Hammock
                                                                       RestCallback callback,
                                                                       TimeSpan duration,
                                                                       int resultsPerCallback,
-                                                                      object userState)
-        {
+                                                                      object userState) {
             var result = GetStreamResult(request, query, url, duration, resultsPerCallback);
 
-            result.Tag = new Triplet<RestRequest, RestCallback, object>
-            {
+            result.Tag = new Triplet<RestRequest, RestCallback, object> {
                 First = request,
                 Second = callback,
                 Third = userState
@@ -1950,16 +1730,13 @@ namespace Hammock
                                                     WebQuery query,
                                                     string url,
                                                     TimeSpan duration,
-                                                    int resultsPerCallback)
-        {
-            if (!request.Method.HasValue)
-            {
+                                                    int resultsPerCallback) {
+            if (!request.Method.HasValue) {
                 request.Method = WebMethod.Get;
             }
 
             WebQueryAsyncResult result;
-            switch (request.Method)
-            {
+            switch (request.Method) {
                 case WebMethod.Get:
                     result = query.ExecuteStreamGetAsync(url, duration, resultsPerCallback);
                     break;
@@ -1975,12 +1752,9 @@ namespace Hammock
             return result;
         }
 
-        private void RegisterTimedTaskForRequest(RestRequest request, TimedTask task)
-        {
-            lock (_timedTasksLock)
-            {
-                if (_tasks.ContainsKey(request))
-                {
+        private void RegisterTimedTaskForRequest(RestRequest request, TimedTask task) {
+            lock (_timedTasksLock) {
+                if (_tasks.ContainsKey(request)) {
                     throw new InvalidOperationException("Task already has a registered timed task");
                 }
                 task.Stopped += (s, e) => UnregisterTimedTaskForRequest(request);
@@ -1988,12 +1762,9 @@ namespace Hammock
             }
         }
 
-        private void UnregisterTimedTaskForRequest(RestRequest request)
-        {
-            lock (_timedTasksLock)
-            {
-                if (_tasks.ContainsKey(request))
-                {
+        private void UnregisterTimedTaskForRequest(RestRequest request) {
+            lock (_timedTasksLock) {
+                if (_tasks.ContainsKey(request)) {
                     var task = _tasks[request];
                     _tasks.Remove(request);
                     task.Dispose();
@@ -2007,25 +1778,21 @@ namespace Hammock
                                           WebQuery query,
                                           string url,
                                           out WebQueryAsyncResult asyncResult,
-                                          object userState)
-        {
+                                          object userState) {
             var taskOptions = GetTaskOptions(request);
-            if (taskOptions == null)
-            {
+            if (taskOptions == null) {
                 asyncResult = null;
                 return false;
             }
 
-            if (taskOptions.RepeatInterval <= TimeSpan.Zero)
-            {
+            if (taskOptions.RepeatInterval <= TimeSpan.Zero) {
                 asyncResult = null;
                 return false;
             }
 
             TimedTask task;
 #if !NETCF
-            if (!taskOptions.GetType().IsGenericType)
-            {
+            if (!taskOptions.GetType().IsGenericType) {
 #endif
                 // Tasks without rate limiting
                 task = new TimedTask(taskOptions.DueTime,
@@ -2042,8 +1809,7 @@ namespace Hammock
 
 #if !NETCF
             }
-            else
-            {
+            else {
                 // Tasks with rate limiting
                 task = (TimedTask)BuildRateLimitingTask(request,
                                                  taskOptions,
@@ -2070,25 +1836,21 @@ namespace Hammock
                                           WebQuery query,
                                           string url,
                                           out WebQueryAsyncResult asyncResult,
-                                          object userState)
-        {
+                                          object userState) {
             var taskOptions = GetTaskOptions(request);
-            if (taskOptions == null)
-            {
+            if (taskOptions == null) {
                 asyncResult = null;
                 return false;
             }
 
-            if (taskOptions.RepeatInterval <= TimeSpan.Zero)
-            {
+            if (taskOptions.RepeatInterval <= TimeSpan.Zero) {
                 asyncResult = null;
                 return false;
             }
 
             TimedTask task;
 #if !NETCF
-            if (!taskOptions.GetType().IsGenericType)
-            {
+            if (!taskOptions.GetType().IsGenericType) {
 #endif
                 // Tasks without rate limiting
                 task = new TimedTask(taskOptions.DueTime,
@@ -2103,8 +1865,7 @@ namespace Hammock
                                                                userState));
 #if !NETCF
             }
-            else
-            {
+            else {
                 // Tasks with rate limiting
                 task = (TimedTask)BuildRateLimitingTask(request,
                                                  taskOptions,
@@ -2115,8 +1876,7 @@ namespace Hammock
 
             }
 #endif
-            lock (_timedTasksLock)
-            {
+            lock (_timedTasksLock) {
                 _tasks[request] = task;
             }
             var action = new Action(task.Start);
@@ -2233,21 +1993,17 @@ namespace Hammock
 #endif
 
 #if !NETCF
-        private object BuildRateLimitingTask(RestRequest request, ITaskOptions taskOptions, RestCallback callback, WebQuery query, string url, object userState)
-        {
-            var taskAction = new Action<bool>(skip =>
-                                                  {
-                                                      if (!skip)
-                                                      {
-                                                          BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
-                                                      }
-                                                      else
-                                                      {
-                                                          callback(request,
-                                                                   new RestResponse { SkippedDueToRateLimitingRule = true },
-                                                                   userState);
-                                                      }
-                                                  });
+        private object BuildRateLimitingTask(RestRequest request, ITaskOptions taskOptions, RestCallback callback, WebQuery query, string url, object userState) {
+            var taskAction = new Action<bool>(skip => {
+                if (!skip) {
+                    BeginRequestImpl(request, callback, query, url, true /* isInternal */, userState);
+                }
+                else {
+                    callback(request,
+                             new RestResponse { SkippedDueToRateLimitingRule = true },
+                             userState);
+                }
+            });
 
             return BuildRateLimitingTaskImpl(taskOptions, taskAction);
         }
@@ -2257,8 +2013,7 @@ namespace Hammock
                                             RestCallback<T> callback,
                                             WebQuery query,
                                             string url,
-                                            object userState)
-        {
+                                            object userState) {
             var taskAction = new Action<bool>(skip => BeginRequestImpl(request,
                                                                        callback,
                                                                        query,
@@ -2271,8 +2026,7 @@ namespace Hammock
         }
 
         private static object BuildRateLimitingTaskImpl(ITaskOptions taskOptions,
-                                                        Action<bool> taskAction)
-        {
+                                                        Action<bool> taskAction) {
             var innerType = taskOptions.GetDeclaredTypeForGeneric(typeof(ITaskOptions<>));
             var rateType = typeof(RateLimitingRule<>).MakeGenericType(innerType);
             var taskType = typeof(TimedTask<>).MakeGenericType(innerType);
@@ -2280,8 +2034,7 @@ namespace Hammock
 
             object taskRule;
             var getRateLimitStatus = taskOptions.GetValue("GetRateLimitStatus");
-            switch (rateLimitingType)
-            {
+            switch (rateLimitingType) {
                 case RateLimitType.ByPercent:
                     var rateLimitingPercent = taskOptions.GetValue("RateLimitPercent");
                     taskRule = getRateLimitStatus != null
@@ -2309,11 +2062,9 @@ namespace Hammock
 #endif
 
 #if !WindowsPhone
-        private bool BeginRequestMultiPart(RestBase request, WebQuery query, string url, out WebQueryAsyncResult result, object userState)
-        {
+        private bool BeginRequestMultiPart(RestBase request, WebQuery query, string url, out WebQueryAsyncResult result, object userState) {
             var parameters = GetPostParameters(request);
-            if (parameters == null || parameters.Count() == 0)
-            {
+            if (parameters == null || parameters.Count() == 0) {
                 result = null;
                 return false;
             }
@@ -2344,18 +2095,15 @@ namespace Hammock
                                            WebQuery query,
                                            string url,
                                            out WebQueryAsyncResult result,
-                                           object userState)
-        {
+                                           object userState) {
             var cache = GetCache(request);
-            if (cache == null)
-            {
+            if (cache == null) {
                 result = null;
                 return false;
             }
 
             var options = GetCacheOptions(request);
-            if (options == null)
-            {
+            if (options == null) {
                 result = null;
                 return false;
             }
@@ -2364,8 +2112,7 @@ namespace Hammock
             var function = GetCacheKeyFunction(request);
             var key = function != null ? function.Invoke() : "";
 
-            switch (options.Mode)
-            {
+            switch (options.Mode) {
                 case CacheMode.NoExpiration:
                     result = query.RequestAsync(url, key, cache, userState);
                     break;
@@ -2424,8 +2171,7 @@ namespace Hammock
         }
 #endif
 
-        private RestResponse BuildResponseFromResult(RestRequest request, WebQuery query)
-        {
+        private RestResponse BuildResponseFromResult(RestRequest request, WebQuery query) {
             request = request ?? new RestRequest();
             var result = query.Result;
             var response = BuildBaseResponse(result);
@@ -2436,8 +2182,7 @@ namespace Hammock
             return response;
         }
 
-        private RestResponse<T> BuildResponseFromResult<T>(RestBase request, WebQuery query)
-        {
+        private RestResponse<T> BuildResponseFromResult<T>(RestBase request, WebQuery query) {
             request = request ?? new RestRequest();
             var result = query.Result;
             var response = BuildBaseResponse<T>(result);
@@ -2449,8 +2194,7 @@ namespace Hammock
         }
 
 #if NET40
-        private RestResponse<T> BuildResponseFromResultDynamic<T>(RestBase request, WebQuery query) where T : DynamicObject
-        {
+        private RestResponse<T> BuildResponseFromResultDynamic<T>(RestBase request, WebQuery query) where T : DynamicObject {
             request = request ?? new RestRequest();
             var result = query.Result;
             var response = BuildBaseResponse<T>(result);
@@ -2463,8 +2207,7 @@ namespace Hammock
 #endif
 
         private static readonly Func<RestResponseBase, WebQueryResult, RestResponseBase> _baseSetter =
-                (response, result) =>
-                {
+                (response, result) => {
                     response.ContentStream = result.ContentStream;
                     response.InnerResponse = result.WebResponse;
                     response.InnerException = result.Exception;
@@ -2481,8 +2224,7 @@ namespace Hammock
                     response.IsMock = result.IsMock;
                     response.TimedOut = result.TimedOut;
                     response.TimesTried = result.TimesTried;
-                    if (result.WebResponse == null)
-                    {
+                    if (result.WebResponse == null) {
                         // [DC] WebResponse could be null, i.e. when streaming
                         return response;
                     }
@@ -2497,13 +2239,10 @@ namespace Hammock
 #endif
 
 #if !SILVERLIGHT
-                    if(result.WebResponse is HttpWebResponse)
-                    {
+                    if (result.WebResponse is HttpWebResponse) {
                         var cookies = (result.WebResponse as HttpWebResponse).Cookies;
-                        if(cookies != null)
-                        {
-                            foreach (Cookie cookie in cookies)
-                            {
+                        if (cookies != null) {
+                            foreach (Cookie cookie in cookies) {
                                 response.Cookies.Add(cookie.Name, cookie.Value);
                             }
                         }
@@ -2513,8 +2252,7 @@ namespace Hammock
                     return response;
                 };
 
-        private static RestResponse BuildBaseResponse(WebQueryResult result)
-        {
+        private static RestResponse BuildBaseResponse(WebQueryResult result) {
             var response = new RestResponse();
 
             _baseSetter.Invoke(response, result);
@@ -2522,8 +2260,7 @@ namespace Hammock
             return response;
         }
 
-        private static RestResponse<T> BuildBaseResponse<T>(WebQueryResult result)
-        {
+        private static RestResponse<T> BuildBaseResponse<T>(WebQueryResult result) {
             var response = new RestResponse<T>();
 
             _baseSetter.Invoke(response, result);
@@ -2531,44 +2268,37 @@ namespace Hammock
             return response;
         }
 
-        private void DeserializeEntityBody(RestRequest request, RestResponse response)
-        {
+        private void DeserializeEntityBody(RestRequest request, RestResponse response) {
             var deserializer = request.Deserializer ?? Deserializer;
-            if (deserializer == null || request.ResponseEntityType == null || response.ContentStream == null)
-            {
+            if (deserializer == null || request.ResponseEntityType == null || response.ContentStream == null) {
                 return;
             }
             response.ContentEntity = deserializer.Deserialize(response, request.ResponseEntityType);
         }
 
-        private void DeserializeEntityBody<T>(RestBase request, RestResponse<T> response)
-        {
+        private void DeserializeEntityBody<T>(RestBase request, RestResponse<T> response) {
             var deserializer = request.Deserializer ?? Deserializer;
-            if (deserializer == null || response.ContentStream == null)
-            {
+            if (deserializer == null || response.ContentStream == null) {
                 return;
             }
             response.ContentEntity = deserializer.Deserialize(response);
         }
 
 #if NET40
-        private void DeserializeEntityBodyDynamic<T>(RestBase request, RestResponse<T> response) where T : DynamicObject
-        {
-            var deserializer = request.Deserializer ?? Deserializer ?? new DefaultJsonSerializer() ;
-            if (response.ContentStream == null)
-            {
+        private void DeserializeEntityBodyDynamic<T>(RestBase request, RestResponse<T> response) where T : DynamicObject {
+            var deserializer = request.Deserializer ?? Deserializer ?? new DefaultJsonSerializer();
+            if (response.ContentStream == null) {
                 return;
             }
             response.ContentEntity = deserializer.DeserializeDynamic(response);
         }
 #endif
 
-        private void SetQueryMeta(RestRequest request, WebQuery query)
-        {
+        private void SetQueryMeta(RestRequest request, WebQuery query) {
             // Fill query collections with found value pairs
             CoalesceWebPairsIntoCollection(query.Parameters, Parameters, request.Parameters);
             CoalesceWebPairsIntoCollection(query.Cookies, Cookies, request.Cookies);
-            
+
             query.Headers.AddRange(Headers);
             query.Headers.AddRange(request.Headers);
 
@@ -2588,60 +2318,59 @@ namespace Hammock
         }
 
         // [DC]: Trump duplicates by request over client over info values
-        private static void CoalesceWebPairsIntoCollection(WebPairCollection target, params IEnumerable<WebPair>[] values)
-        {
-            foreach (var parameter in values.SelectMany(value => value))
-            {
-                if (target[parameter.Name] != null)
-                {
+        private static void CoalesceWebPairsIntoCollection(WebPairCollection target, params IEnumerable<WebPair>[] values) {
+            foreach (var parameter in values.SelectMany(value => value)) {
+                if (target[parameter.Name] != null) {
                     target[parameter.Name].Value = parameter.Value;
                 }
-                else
-                {
+                else {
                     target.Add(parameter);
                 }
             }
         }
 
-        private void SerializeEntityBody(WebQuery query, RestRequest request)
-        {
+        private void SerializeEntityBody(WebQuery query, RestRequest request) {
             var serializer = GetSerializer(request);
-            if (serializer == null)
-            {
-                // No suitable serializer for entity
-                return;
+
+            if (serializer == null) {
+                if (request.Entity != null) {
+                    query.Entity = new WebEntity {
+                        Content = request.Entity.ToString(),
+                        ContentEncoding = Encoding.UTF8,
+                        ContentType = "application/xml"
+                    };
+                    return;
+                }
+                else {
+                    return;
+                }
             }
 
-            if (request.Entity == null || request.RequestEntityType == null)
-            {
+            if (request.Entity == null || request.RequestEntityType == null) {
                 // Not enough information to serialize
                 return;
             }
 
             var entityBody = serializer.Serialize(request.Entity, request.RequestEntityType);
             query.Entity = !entityBody.IsNullOrBlank()
-                               ? new WebEntity
-                                     {
-                                         Content = entityBody,
-                                         ContentEncoding = serializer.ContentEncoding,
-                                         ContentType = serializer.ContentType
-                                     }
+                               ? new WebEntity {
+                                   Content = entityBody,
+                                   ContentEncoding = serializer.ContentEncoding,
+                                   ContentType = serializer.ContentType
+                               }
                                : null;
         }
 
-        private WebEntity SerializeExpectEntity(RestRequest request)
-        {
+        private WebEntity SerializeExpectEntity(RestRequest request) {
             var serializer = GetSerializer(request);
-            if (serializer == null || request.ExpectEntity == null)
-            {
+            if (serializer == null || request.ExpectEntity == null) {
                 // No suitable serializer or entity
                 return null;
             }
 
             var entityBody = serializer.Serialize(request.ExpectEntity, request.RequestEntityType);
             var entity = !entityBody.IsNullOrBlank()
-                               ? new WebEntity
-                               {
+                               ? new WebEntity {
                                    Content = entityBody,
                                    ContentEncoding = serializer.ContentEncoding,
                                    ContentType = serializer.ContentType
@@ -2649,8 +2378,7 @@ namespace Hammock
             return entity;
         }
 
-        public WebQuery GetQueryFor(RestBase request, Uri uri)
-        {
+        public WebQuery GetQueryFor(RestBase request, Uri uri) {
             var method = GetWebMethod(request);
             var credentials = GetWebCredentials(request);
             var info = GetInfo(request);
@@ -2673,32 +2401,25 @@ namespace Hammock
             return query;
         }
 
-        private void QueryPostProgress(object sender, PostProgressEventArgs e)
-        {
-            var args = new FileProgressEventArgs
-                           {
-                               FileName = e.FileName,
-                               BytesWritten = e.BytesWritten,
-                               TotalBytes = e.TotalBytes
-                           };
+        private void QueryPostProgress(object sender, PostProgressEventArgs e) {
+            var args = new FileProgressEventArgs {
+                FileName = e.FileName,
+                BytesWritten = e.BytesWritten,
+                TotalBytes = e.TotalBytes
+            };
             OnFileProgress(args);
         }
 
-        public void CancelStreaming()
-        {
-            lock (_streamingLock)
-            {
-                if (_streamQuery != null)
-                {
+        public void CancelStreaming() {
+            lock (_streamingLock) {
+                if (_streamQuery != null) {
                     _streamQuery.IsStreaming = false;
                 }
             }
         }
 
-        public void CancelPeriodicTasks()
-        {
-            lock (_timedTasksLock)
-            {
+        public void CancelPeriodicTasks() {
+            lock (_timedTasksLock) {
                 // Copy to a new list, since canceling 
                 // the task removes it from the _tasks
                 // list, the enumeration will throw
@@ -2708,16 +2429,13 @@ namespace Hammock
             }
         }
 
-        public int GetIterationCount(RestRequest request)
-        {
+        public int GetIterationCount(RestRequest request) {
             var retryState = request.RetryState ?? RetryState;
             var taskState = request.TaskState ?? TaskState;
-            if (retryState != null)
-            {
+            if (retryState != null) {
                 return retryState.RepeatCount;
             }
-            if (taskState != null)
-            {
+            if (taskState != null) {
                 return taskState.RepeatCount;
             }
             return 0;

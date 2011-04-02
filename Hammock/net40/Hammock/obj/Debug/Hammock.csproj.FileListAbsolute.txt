@@ -8,3 +8,8 @@ C:\Dropbox\My Dropbox\Dev\F1toPCO\bin\lib\4.0\Hammock.pdb
 C:\Dropbox\My Dropbox\Dev\F1toPCO\Hammock\net40\Hammock\obj\Debug\ResolveAssemblyReference.cache
 C:\Dropbox\My Dropbox\Dev\F1toPCO\Hammock\net40\Hammock\obj\Debug\Hammock.dll
 C:\Dropbox\My Dropbox\Dev\F1toPCO\Hammock\net40\Hammock\obj\Debug\Hammock.pdb
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\bin\lib\4.0\Hammock.dll
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\bin\lib\4.0\Hammock.pdb
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\Hammock\net40\Hammock\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\Hammock\net40\Hammock\obj\Debug\Hammock.dll
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\Hammock\net40\Hammock\obj\Debug\Hammock.pdb

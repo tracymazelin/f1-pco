@@ -17,3 +17,6 @@ C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\Hammock.dll
 C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\bin\Hammock.pdb
 C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.dll
 C:\Dropbox\My Dropbox\Dev\F1toPCO\F1toPCO\obj\Debug\F1toPCO.pdb
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\F1toPCO\bin\Elmah.dll
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\F1toPCO\bin\Elmah.pdb
+C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\F1toPCO\bin\Elmah.xml

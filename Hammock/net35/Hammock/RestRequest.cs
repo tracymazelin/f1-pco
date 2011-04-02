@@ -83,7 +83,7 @@ namespace Hammock
         public Uri BuildEndpoint(RestClient client)
         {
             var sb = new StringBuilder();
-
+            
             var path = Path.IsNullOrBlank()
                            ? client.Path.IsNullOrBlank() ? "" : client.Path
                            : Path;
