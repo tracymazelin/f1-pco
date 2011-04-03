@@ -13,14 +13,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using F1toPCO.Models;
 
-namespace F1toPCO.Model {
+namespace F1toPCO.Model.F1 {
 
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlRoot("results")]
-    public class People {
+    public class people {
         
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "person")]
-        public List<Person> items { get; set; }
+        public List<person> items { get; set; }
 
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "pageNumber")]
         public string page { get; set; }
@@ -42,7 +42,7 @@ namespace F1toPCO.Model {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class Person : BaseModel {
+    public partial class person : BaseModel {
 
         private string titleField;
 
@@ -124,7 +124,7 @@ namespace F1toPCO.Model {
 
         private string householdIDField;
 
-        public Person() {
+        public person() {
 
         }
        

@@ -8,291 +8,290 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Xml.Serialization;
-using F1toPCO.Model;
-using F1toPCO.Models;
 using System.Collections.Generic;
+using F1toPCO.Models;
 
+namespace F1toPCO.Model.F1 {
 
-
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlRoot("communications")]
-public class communications {
-    [System.Xml.Serialization.XmlElementAttribute(ElementName = "communication")]
-    public List<communication> items { get; set; }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-public partial class communication : BaseModel {
-
-    private household householdField;
-
-    private Person personField;
-
-    private communicationType communicationTypeField;
-
-    private communicationGeneralType communicationGeneralTypeField;
-
-    private string communicationValueField;
-
-    private string searchCommunicationValueField;
-
-    private bool listedField;
-
-    private string communicationCommentField;
-
-    private System.Nullable<System.DateTime> createdDateField;
-
-    private System.Nullable<System.DateTime> lastUpdatedDateField;
-
-    private string uriField;
-
-    private string idField;
-
-    public communication() {
-        this.createdDateField = new System.DateTime(0);
-        this.lastUpdatedDateField = new System.DateTime(0);
-
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlRoot("communications")]
+    public class communications {
+        [System.Xml.Serialization.XmlElementAttribute(ElementName = "communication")]
+        public List<communication> items { get; set; }
     }
 
     /// <remarks/>
-    public household household {
-        get {
-            return this.householdField;
-        }
-        set {
-            SetField(ref householdField, value, "household");
-        }
-    }
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    public partial class communication : BaseModel {
 
-    /// <remarks/>
-    public Person person {
-        get {
-            return this.personField;
-        }
-        set {
-            SetField(ref personField, value, "person");
-        }
-    }
+        private household householdField;
 
-    /// <remarks/>
-    public communicationType communicationType {
-        get {
-            return this.communicationTypeField;
-        }
-        set {
-            SetField(ref communicationTypeField, value, "communicationType");
-        }
-    }
+        private person personField;
 
-    /// <remarks/>
-    public communicationGeneralType communicationGeneralType {
-        get {
-            return this.communicationGeneralTypeField;
-        }
-        set {
-            this.communicationGeneralTypeField = value;
-        }
-    }
+        private communicationType communicationTypeField;
 
-    /// <remarks/>
-    public string communicationValue {
-        get {
-            return this.communicationValueField;
-        }
-        set {
-            SetField(ref communicationValueField, value, "communicationValue");
-        }
-    }
+        private communicationGeneralType communicationGeneralTypeField;
 
-    /// <remarks/>
-    public string searchCommunicationValue {
-        get {
-            return this.searchCommunicationValueField;
-        }
-        set {
-            SetField(ref searchCommunicationValueField, value, "searchCommunicationValue");
-        }
-    }
+        private string communicationValueField;
 
-    /// <remarks/>
-    public bool listed {
-        get {
-            return this.listedField;
-        }
-        set {
-            SetField(ref listedField, value, "listed");
-        }
-    }
+        private string searchCommunicationValueField;
 
-    /// <remarks/>
-    public string communicationComment {
-        get {
-            return this.communicationCommentField;
-        }
-        set {
-            SetField(ref communicationCommentField, value, "communicationComment");
-        }
-    }
+        private bool listedField;
 
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-    public System.Nullable<System.DateTime> createdDate {
-        get {
-            return this.createdDateField;
-        }
-        set {
-            this.createdDateField = value;
-        }
-    }
+        private string communicationCommentField;
 
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-    public System.Nullable<System.DateTime> lastUpdatedDate {
-        get {
-            return this.lastUpdatedDateField;
-        }
-        set {
-            this.lastUpdatedDateField = value;
-        }
-    }
+        private System.Nullable<System.DateTime> createdDateField;
 
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
-    public string uri {
-        get {
-            return this.uriField;
+        private System.Nullable<System.DateTime> lastUpdatedDateField;
+
+        private string uriField;
+
+        private string idField;
+
+        public communication() {
+            this.createdDateField = new System.DateTime(0);
+            this.lastUpdatedDateField = new System.DateTime(0);
+
         }
-        set {
-            this.uriField = value;
+
+        /// <remarks/>
+        public household household {
+            get {
+                return this.householdField;
+            }
+            set {
+                SetField(ref householdField, value, "household");
+            }
         }
-    }
 
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string id {
-        get {
-            return this.idField;
+        /// <remarks/>
+        public person person {
+            get {
+                return this.personField;
+            }
+            set {
+                SetField(ref personField, value, "person");
+            }
         }
-        set {
-            this.idField = value;
+
+        /// <remarks/>
+        public communicationType communicationType {
+            get {
+                return this.communicationTypeField;
+            }
+            set {
+                SetField(ref communicationTypeField, value, "communicationType");
+            }
         }
-    }
-}
 
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-public partial class communicationType : BaseModel {
-
-    private string nameField;
-
-    private string uriField;
-
-    private string idField;
-
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public string name {
-        get {
-            return this.nameField;
+        /// <remarks/>
+        public communicationGeneralType communicationGeneralType {
+            get {
+                return this.communicationGeneralTypeField;
+            }
+            set {
+                this.communicationGeneralTypeField = value;
+            }
         }
-        set {
-            SetField(ref nameField, value, "name");
+
+        /// <remarks/>
+        public string communicationValue {
+            get {
+                return this.communicationValueField;
+            }
+            set {
+                SetField(ref communicationValueField, value, "communicationValue");
+            }
+        }
+
+        /// <remarks/>
+        public string searchCommunicationValue {
+            get {
+                return this.searchCommunicationValueField;
+            }
+            set {
+                SetField(ref searchCommunicationValueField, value, "searchCommunicationValue");
+            }
+        }
+
+        /// <remarks/>
+        public bool listed {
+            get {
+                return this.listedField;
+            }
+            set {
+                SetField(ref listedField, value, "listed");
+            }
+        }
+
+        /// <remarks/>
+        public string communicationComment {
+            get {
+                return this.communicationCommentField;
+            }
+            set {
+                SetField(ref communicationCommentField, value, "communicationComment");
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+        public System.Nullable<System.DateTime> createdDate {
+            get {
+                return this.createdDateField;
+            }
+            set {
+                this.createdDateField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+        public System.Nullable<System.DateTime> lastUpdatedDate {
+            get {
+                return this.lastUpdatedDateField;
+            }
+            set {
+                this.lastUpdatedDateField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
+        public string uri {
+            get {
+                return this.uriField;
+            }
+            set {
+                this.uriField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
         }
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
-    public string uri {
-        get {
-            return this.uriField;
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    public partial class communicationType : BaseModel {
+
+        private string nameField;
+
+        private string uriField;
+
+        private string idField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                SetField(ref nameField, value, "name");
+            }
         }
-        set {
-            this.uriField = value;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType = "anyURI")]
+        public string uri {
+            get {
+                return this.uriField;
+            }
+            set {
+                this.uriField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    public enum communicationGeneralType {
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlEnumAttribute("")]
+        Item,
+
+        /// <remarks/>
+        Email,
+
+        /// <remarks/>
+        Telephone,
+
+        /// <remarks/>
+        SocialMedia,
+
+        /// <remarks/>
+        Web,
+    }
+
+    public static class phoneSyncType {
+        private static List<EntityType> _entityType;
+        public static List<EntityType> Items {
+            get {
+                _entityType = new List<EntityType>();
+                _entityType.Add(new EntityType("Home Phone", "Home"));
+                _entityType.Add(new EntityType("Work Phone", "Work"));
+                _entityType.Add(new EntityType("Mobile", "Mobile"));
+                _entityType.Add(new EntityType("Pager", "Pager"));
+                _entityType.Add(new EntityType("Fax", "Fax"));
+                return _entityType;
+            }
         }
     }
 
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string id {
-        get {
-            return this.idField;
-        }
-        set {
-            this.idField = value;
-        }
-    }
-}
+    public static class emailSyncType {
+        private static List<EntityType> _entityType;
+        public static List<EntityType> Items {
+            get {
+                _entityType = new List<EntityType>();
+                _entityType.Add(new EntityType("Email", "Home"));
+                _entityType.Add(new EntityType("Work Email", "Work"));
+                return _entityType;
+            }
 
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.1")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-public enum communicationGeneralType {
-
-    /// <remarks/>
-    [System.Xml.Serialization.XmlEnumAttribute("")]
-    Item,
-
-    /// <remarks/>
-    Email,
-
-    /// <remarks/>
-    Telephone,
-
-    /// <remarks/>
-    SocialMedia,
-
-    /// <remarks/>
-    Web,
-}
-
-public static class phoneSyncType {
-    private static List<EntityType> _entityType;
-    public static List<EntityType> Items {
-        get {
-            _entityType = new List<EntityType>();
-            _entityType.Add(new EntityType("Home Phone", "Home"));
-            _entityType.Add(new EntityType("Work Phone", "Work"));
-            _entityType.Add(new EntityType("Mobile", "Mobile"));
-            _entityType.Add(new EntityType("Pager", "Pager"));
-            _entityType.Add(new EntityType("Fax", "Fax"));
-            return _entityType;
         }
     }
-}
 
-public static class emailSyncType {
-    private static List<EntityType> _entityType;
-    public static List<EntityType> Items {
-        get {
-            _entityType = new List<EntityType>();
-            _entityType.Add(new EntityType("Email", "Home"));
-            _entityType.Add(new EntityType("Work Email", "Work"));
-            return _entityType;
+    public class EntityType {
+        public EntityType(string F1Type, string PCOType) {
+            this.F1Type = F1Type;
+            this.PCOType = PCOType;
         }
 
+        public string F1Type;
+        public string PCOType;
     }
-}
-
-public class EntityType {
-    public EntityType(string F1Type, string PCOType) {
-        this.F1Type = F1Type;
-        this.PCOType = PCOType;
-    }
-
-    public string F1Type;
-    public string PCOType;
 }

@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using F1toPCO.Util;
-using System.Net;
-using System.IO;
-using System.Xml.Serialization;
-using Hammock.Authentication.OAuth;
-using Hammock;
-using F1toPCO.Model;
 using System.Xml;
-using System.Text;
+using System.Xml.Serialization;
+using F1toPCO.Model;
+using F1toPCO.Util;
+using Hammock;
+using Hammock.Authentication.OAuth;
 using Hammock.Web;
 
 namespace F1toPCO.Controllers {
@@ -39,11 +39,11 @@ namespace F1toPCO.Controllers {
 
         public Token F1AccessToken {
             get {
-                //if (Session["F1AccessToken"] != null) {
-                //    return (Token)Session["F1AccessToken"];
-                //}
-                //return null;
-                return new Token("3c5e5d61-f99b-4fdf-bc4e-e8ed7600a78f", "2cf5cb49-b275-4e76-9a10-2ee631b00dc8");
+                if (Session["F1AccessToken"] != null) {
+                    return (Token)Session["F1AccessToken"];
+                }
+                return null;
+                //return new Token("3c5e5d61-f99b-4fdf-bc4e-e8ed7600a78f", "2cf5cb49-b275-4e76-9a10-2ee631b00dc8");
             }
             set {
                 if (Session["F1AccessToken"] != null) {
@@ -57,11 +57,11 @@ namespace F1toPCO.Controllers {
 
         public Token PCOAccessToken {
             get {
-                //if (Session["PCOAccessToken"] != null) {
-                //    return (Token)Session["PCOAccessToken"];
-                //}
-                //return null;
-                return new Token("VdCpi2nqbilzyPpqMGoa", "qjUrqMHkHJcJGmnKyAjfqBsgROXHEJieU5jiQxoE");
+                if (Session["PCOAccessToken"] != null) {
+                    return (Token)Session["PCOAccessToken"];
+                }
+                return null;
+                //return new Token("VdCpi2nqbilzyPpqMGoa", "qjUrqMHkHJcJGmnKyAjfqBsgROXHEJieU5jiQxoE");
             }
             set {
                 if (Session["PCOAccessToken"] != null) {
@@ -119,7 +119,7 @@ namespace F1toPCO.Controllers {
 
             this.ChurchCode = churchCode;
 
-            if (this.F1AccessToken.Value != null && this.PCOAccessToken.Value != null) {
+            if (this.F1AccessToken != null && this.PCOAccessToken != null) {
                 return RedirectToAction("StartSync");
             }
             else {
@@ -151,42 +151,64 @@ namespace F1toPCO.Controllers {
 
         public ActionResult StartSync() {
             int attributeId = int.MinValue;
-            PCOperson person = null;
-            string payload = null;
+            F1toPCO.Model.PCO.person person = null;
 
             attributeId = this.F1GetAttributeID("SyncMe");
 
-            People f1People = this.F1GetPeopleByAttribute(attributeId);
+            F1toPCO.Model.F1.people f1People = this.F1GetPeopleByAttribute(attributeId);
 
-            foreach (Person p in f1People.items) {
+            foreach (F1toPCO.Model.F1.person p in f1People.items) {
                 //Get the comment for the attribute to see if we already now the PCOID.
                 string comment = this.ExtractComment(attributeId, p.attributes.peopleAttribute);
 
                 if (comment != string.Empty) {
                     //We have the id.  Update the record if needed.
                     person = this.PCOGetPersonByID(Convert.ToInt32(comment));
-
-                    this.PCODeletePerson(comment);
-                    //this.UpdatePerson(p, ref person);
-
-                    //payload = this.SerializeEntity(person);
-
-                    //this.PCOUpdatePerson(payload, comment);
+                    this.UpdatePerson(p, ref person);
+                    this.PCOUpdatePerson(this.SerializeEntity(person), comment);
                 }
                 else {
-                    PCOperson pcop = new PCOperson();
-                    pcop.firstname = p.firstName;
-                    pcop.lastname = p.lastName;
-                    pcop.name = p.firstName + " " + (string.IsNullOrEmpty(p.goesByName) ? p.lastName : p.goesByName + " " + p.lastName);
-                    pcop.contactdata = new Contactdata();
-                    pcop.contactdata.addresses = new Addresses();
-                    pcop.contactdata.phonenumbers = new Phonenumbers();
-                    pcop.contactdata.emailaddresses = new Emailaddresses();
-                    this.UpdatePerson(p, ref pcop);
+                    //Look at the person by name
+                    Model.PCO.people people = null;
+                    people = this.PCOGetPersonByName((p.lastName.Length > 3 ? p.lastName.Substring(0, 3) : p.lastName) + p.firstName.Substring(1));
 
-                    payload = this.SerializeEntity(pcop);
+                    if (people.person.Count == 1) {
+                        //Only one match.
+                        Model.PCO.person matchPerson = people.person.FirstOrDefault();
+                        this.UpdatePerson(p, ref matchPerson);
+                        this.PCOUpdatePerson(this.SerializeEntity(matchPerson), matchPerson.id.Value);
+                    }
+                    else if (people.person.Count == 0) {
+                        //create
+                        //make sure to write the ID to the sync me attribute
 
-                    this.PCOCreatePerson(payload);
+
+                        //F1toPCO.Model.PCO.person pcop = new F1toPCO.Model.PCO.person();
+                        //pcop.firstname = p.firstName;
+                        //pcop.lastname = p.lastName;
+                        //pcop.name = p.firstName + " " + (string.IsNullOrEmpty(p.goesByName) ? p.lastName : p.goesByName + " " + p.lastName);
+                        //this.UpdatePerson(p, ref pcop);
+
+                        //payload = this.SerializeEntity(pcop);
+
+                        //this.PCOCreatePerson(payload);
+                        //Check PCO to see if user exists.
+                        //Remember to write the ID back to the attribute for this user if we find one.
+                    }
+                    else {
+                        //Multiples.  Need user input.
+
+                    }
+
+                    //F1toPCO.Model.PCO.person pcop = new F1toPCO.Model.PCO.person();
+                    //pcop.firstname = p.firstName;
+                    //pcop.lastname = p.lastName;
+                    //pcop.name = p.firstName + " " + (string.IsNullOrEmpty(p.goesByName) ? p.lastName : p.goesByName + " " + p.lastName);
+                    //this.UpdatePerson(p, ref pcop);
+
+                    //payload = this.SerializeEntity(pcop);
+
+                    //this.PCOCreatePerson(payload);
                     //Check PCO to see if user exists.
                     //Remember to write the ID back to the attribute for this user if we find one.
 
@@ -326,66 +348,86 @@ namespace F1toPCO.Controllers {
 
         #region Helpers
 
-        private void UpdatePerson(Person f1Person, ref PCOperson pcoPerson) {
-           
-            //Emails
-            communications emailComms = new communications();
-            emailComms.items = f1Person.communications.items.Where(y => (y.communicationGeneralType == communicationGeneralType.Email) &&
-                                                                        (y.communicationType.name == "Email" ||
-                                                                         y.communicationType.name == "Work Email"))
-                                                                        .ToList();
-            foreach (communication c in emailComms.items) {
-                Emailaddress email = pcoPerson.contactdata.emailaddresses.emailaddress.Where(e => e.location == emailSyncType.Items.Where(f => f.F1Type == c.communicationType.name).FirstOrDefault().PCOType).FirstOrDefault();
-                if (email != null) {
-                    if (c.lastUpdatedDate >= Convert.ToDateTime(pcoPerson.updatedat.Value)) { }
-                    if (email.address != c.communicationValue) {
-                        email.address = c.communicationValue;
+        private void UpdateEmailCommunications(F1toPCO.Model.F1.communications f1Emails, F1toPCO.Model.PCO.emailAddresses pcoEmails) {
+            foreach (F1toPCO.Model.F1.EntityType et in F1toPCO.Model.F1.emailSyncType.Items) {
+                F1toPCO.Model.F1.communication tmpF1Email = f1Emails.items.Where(y => y.communicationType.name == et.F1Type).FirstOrDefault();
+                F1toPCO.Model.PCO.emailAddress tmpPCOEmail = pcoEmails.emailAddress.Where(x => x.location == et.PCOType).FirstOrDefault();
+
+                if (tmpF1Email != null) {
+                    if (tmpPCOEmail == null) {
+                        tmpPCOEmail = new Model.PCO.emailAddress();
+                        tmpPCOEmail.address = tmpF1Email.communicationValue;
+                        tmpPCOEmail.location = et.PCOType;
+                        pcoEmails.emailAddress.Add(tmpPCOEmail);
+                    }
+                    else {
+                        tmpPCOEmail.address = tmpF1Email.communicationValue;
                     }
                 }
                 else {
-                    email = new Emailaddress();
-                    email.address = c.communicationValue;
-                    email.location = emailSyncType.Items.Where(e => e.F1Type == c.communicationType.name).FirstOrDefault().PCOType;
-                    pcoPerson.contactdata.emailaddresses.emailaddress.Add(email);
+                    if (tmpPCOEmail != null) {
+                        pcoEmails.emailAddress.Remove(tmpPCOEmail);
+                    }
                 }
+
             }
+        }
+
+        private void UpdatePhoneCommunications(F1toPCO.Model.F1.communications f1Phones, F1toPCO.Model.PCO.phoneNumbers pcoPhones) {
+            foreach (F1toPCO.Model.F1.EntityType et in F1toPCO.Model.F1.phoneSyncType.Items) {
+                F1toPCO.Model.F1.communication tmpF1Phone = f1Phones.items.Where(y => y.communicationType.name == et.F1Type).FirstOrDefault();
+                F1toPCO.Model.PCO.phoneNumber tmpPCOPhone = pcoPhones.phoneNumber.Where(x => x.location == et.PCOType).FirstOrDefault();
+
+                if (tmpF1Phone != null) {
+                    if (tmpPCOPhone == null) {
+                        tmpPCOPhone = new Model.PCO.phoneNumber();
+                        tmpPCOPhone.number = tmpF1Phone.communicationValue;
+                        tmpPCOPhone.location = et.PCOType;
+                        pcoPhones.phoneNumber.Add(tmpPCOPhone);
+                    }
+                    else {
+                        tmpPCOPhone.location = tmpF1Phone.communicationValue;
+                    }
+                }
+                else {
+                    if (tmpPCOPhone != null) {
+                        pcoPhones.phoneNumber.Remove(tmpPCOPhone);
+                    }
+
+                }
+
+            }
+        }
+
+        private void UpdatePerson(F1toPCO.Model.F1.person f1Person, ref F1toPCO.Model.PCO.person pcoPerson) {
+
+            //Emails
+            F1toPCO.Model.F1.communications emailComms = new F1toPCO.Model.F1.communications();
+            emailComms.items = f1Person.communications.items.Where(y => y.communicationGeneralType == F1toPCO.Model.F1.communicationGeneralType.Email).ToList();
+            UpdateEmailCommunications(emailComms, pcoPerson.contactData.emailAddresses);
 
             //Phone numbers
-            communications phoneComs = new communications();
-            phoneComs.items = f1Person.communications.items.Where(y => (y.communicationGeneralType == communicationGeneralType.Telephone) &&
-                                                                        (y.communicationType.name == "Home Phone" ||
-                                                                         y.communicationType.name == "Work Phone" ||
-                                                                         y.communicationType.name == "Mobile" ||
-                                                                         y.communicationType.name == "Fax"))
-                                                                        .ToList();
-            foreach (communication c in phoneComs.items) {
-                Phonenumber phone = pcoPerson.contactdata.phonenumbers.phonenumber.Where(e => e.location == phoneSyncType.Items.Where(f => f.F1Type == c.communicationType.name).FirstOrDefault().PCOType).FirstOrDefault();
-                if (phone != null) {
-                    if (c.lastUpdatedDate >= Convert.ToDateTime(pcoPerson.updatedat.Value)) { }
-                    if (phone.number != c.communicationValue) {
-                        phone.number = c.communicationValue;
-                    }
-                }
-                else {
-                    phone = new Phonenumber();
-                    phone.number = c.communicationValue;
-                    phone.location = phoneSyncType.Items.Where(e => e.F1Type == c.communicationType.name).FirstOrDefault().PCOType;
-                    pcoPerson.contactdata.phonenumbers.phonenumber.Add(phone);
-                }
-            }
+            F1toPCO.Model.F1.communications phoneComs = new F1toPCO.Model.F1.communications();
+            phoneComs.items = f1Person.communications.items.Where(y => y.communicationGeneralType == F1toPCO.Model.F1.communicationGeneralType.Telephone).ToList();
+            UpdatePhoneCommunications(phoneComs, pcoPerson.contactData.phoneNumbers);
 
             //Address
-            address primaryAddress = f1Person.addresses.items.Where(x => x.addressType.name == "Primary").FirstOrDefault();
+            F1toPCO.Model.F1.address primaryAddress = f1Person.addresses.items.Where(x => x.addressType.name == "Primary").FirstOrDefault();
+            F1toPCO.Model.PCO.address pcoAddress = pcoPerson.contactData.addresses.address.Where(x => x.location == "Home").FirstOrDefault();
             if (primaryAddress != null) {
-                Address pcoAddress = pcoPerson.contactdata.addresses.address.Where(x => x.location == "Home").FirstOrDefault();
                 if (pcoAddress == null) {
-                    pcoAddress = new Address();
-                    pcoPerson.contactdata.addresses.address.Add(pcoAddress);
+                    pcoAddress = new F1toPCO.Model.PCO.address();
+                    pcoPerson.contactData.addresses.address.Add(pcoAddress);
                 }
                 pcoAddress.street = FormatStreet(primaryAddress);
                 pcoAddress.city = primaryAddress.city;
                 pcoAddress.state = primaryAddress.stProvince;
                 pcoAddress.zip = primaryAddress.postalCode;
+            }
+            else {
+                if (pcoAddress != null) {
+                    pcoPerson.contactData.addresses.address.Remove(pcoAddress);
+                }
             }
         }
 
@@ -394,7 +436,7 @@ namespace F1toPCO.Controllers {
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        private string FormatStreet(address address) {
+        private string FormatStreet(F1toPCO.Model.F1.address address) {
             StringBuilder retAddress = new StringBuilder();
 
             retAddress.Append(address.address1);
@@ -414,7 +456,7 @@ namespace F1toPCO.Controllers {
         /// <param name="attributeId"></param>
         /// <param name="peopleAttribute"></param>
         /// <returns>string</returns>
-        private string ExtractComment(int attributeId, List<peopleAttribute> peopleAttribute) {
+        private string ExtractComment(int attributeId, List<F1toPCO.Model.F1.peopleAttribute> peopleAttribute) {
             string ret = string.Empty;
 
             var comment = (from a in peopleAttribute
@@ -550,9 +592,9 @@ namespace F1toPCO.Controllers {
             return attributeId;
         }
 
-        private People F1GetPeopleByAttribute(int attributeId) {
+        private F1toPCO.Model.F1.people F1GetPeopleByAttribute(int attributeId) {
 
-            People peopleCollection = null;
+            F1toPCO.Model.F1.people peopleCollection = null;
 
             RestRequest request = new RestRequest {
                 Path = string.Format("People/Search", attributeId.ToString())
@@ -564,10 +606,10 @@ namespace F1toPCO.Controllers {
             using (RestResponse response = F1Client.Request(request)) {
                 if (response.StatusCode == HttpStatusCode.OK) {
                     using (StreamReader streamReader = new StreamReader(response.ContentStream)) {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(People));
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(F1toPCO.Model.F1.people));
 
                         // Deserialize the response into a Person object.
-                        peopleCollection = xmlSerializer.Deserialize(streamReader) as People;
+                        peopleCollection = xmlSerializer.Deserialize(streamReader) as F1toPCO.Model.F1.people;
                     }
                 }
                 else {
@@ -577,9 +619,9 @@ namespace F1toPCO.Controllers {
             return peopleCollection;
         }
 
-        private PCOperson PCOGetPersonByID(int id) {
+        private F1toPCO.Model.PCO.person PCOGetPersonByID(int id) {
 
-            PCOPeople peeps = null;
+            F1toPCO.Model.PCO.people peeps = null;
 
             var request = new RestRequest {
                 Path = "people.xml"
@@ -590,17 +632,42 @@ namespace F1toPCO.Controllers {
             using (RestResponse response = PCOClient.Request(request)) {
                 if (response.StatusCode == HttpStatusCode.OK) {
                     using (StreamReader streamReader = new StreamReader(response.ContentStream)) {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(PCOPeople));
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(F1toPCO.Model.PCO.people));
 
                         // Deserialize the response into a Person object.
-                        peeps = xmlSerializer.Deserialize(streamReader) as PCOPeople;
+                        peeps = xmlSerializer.Deserialize(streamReader) as F1toPCO.Model.PCO.people;
                     }
                 }
                 else {
                     throw new Exception("An error occured: Status code: " + response.StatusCode, response.InnerException);
                 }
             }
-            return peeps != null ? peeps.Person.FirstOrDefault() : null;
+            return peeps != null ? peeps.person.FirstOrDefault() : null;
+        }
+
+        private Model.PCO.people PCOGetPersonByName(string name) {
+            F1toPCO.Model.PCO.people peeps = null;
+
+            var request = new RestRequest {
+                Path = "people.xml"
+            };
+
+            request.AddParameter("name", name);
+
+            using (RestResponse response = PCOClient.Request(request)) {
+                if (response.StatusCode == HttpStatusCode.OK) {
+                    using (StreamReader streamReader = new StreamReader(response.ContentStream)) {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(F1toPCO.Model.PCO.people));
+
+                        // Deserialize the response into a Person object.
+                        peeps = xmlSerializer.Deserialize(streamReader) as F1toPCO.Model.PCO.people;
+                    }
+                }
+                else {
+                    throw new Exception("An error occured: Status code: " + response.StatusCode, response.InnerException);
+                }
+            }
+            return peeps;
         }
 
         private bool PCOCreatePerson(string xml) {
