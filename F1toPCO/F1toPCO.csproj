@@ -81,6 +81,7 @@
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Communications.cs" />
     <Compile Include="Models\Households.cs" />
+    <Compile Include="Models\MatchHelper.cs" />
     <Compile Include="Models\PCOPeople.cs" />
     <Compile Include="Models\People.cs" />
     <Compile Include="Models\PeopleAttributes.cs" />
@@ -93,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Views\Home\MultipleMatches.aspx" />
     <Content Include="Views\Home\StartSync.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

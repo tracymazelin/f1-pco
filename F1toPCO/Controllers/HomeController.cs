@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Serialization;
-using F1toPCO.Model;
 using F1toPCO.Util;
 using Hammock;
 using Hammock.Authentication.OAuth;
@@ -106,6 +105,23 @@ namespace F1toPCO.Controllers {
                 }
             }
         }
+
+        public List<Model.MatchHelper> Matches {
+            get {
+                if (Session["Matches"] == null) {
+                    Session["Matches"] = new List<Model.MatchHelper>();
+                }
+                return (List<Model.MatchHelper>)Session["Matches"];
+            }
+            set {
+                if (Session["Matches"] != null) {
+                    Session["Matches"] = value;
+                }
+                else {
+                    Session.Add("Matches", value);
+                }
+            }
+        }
         #endregion
 
         #region Actions
@@ -151,11 +167,11 @@ namespace F1toPCO.Controllers {
 
         public ActionResult StartSync() {
             int attributeId = int.MinValue;
-            F1toPCO.Model.PCO.person person = null;
+            Model.PCO.person person = null;
 
             attributeId = this.F1GetAttributeID("SyncMe");
 
-            F1toPCO.Model.F1.people f1People = this.F1GetPeopleByAttribute(attributeId);
+            Model.F1.people f1People = this.F1GetPeopleByAttribute(attributeId);
 
             foreach (F1toPCO.Model.F1.person p in f1People.items) {
                 //Get the comment for the attribute to see if we already now the PCOID.
@@ -170,7 +186,7 @@ namespace F1toPCO.Controllers {
                 else {
                     //Look at the person by name
                     Model.PCO.people people = null;
-                    people = this.PCOGetPersonByName((p.lastName.Length > 3 ? p.lastName.Substring(0, 3) : p.lastName) + p.firstName.Substring(1));
+                    people = this.PCOGetPersonByName(p.lastName + ", " + (string.IsNullOrEmpty(p.goesByName) ? p.firstName.Substring(0, 1) : p.goesByName.Substring(0, 1)));
 
                     if (people.person.Count == 1) {
                         //Only one match.
@@ -182,40 +198,35 @@ namespace F1toPCO.Controllers {
                         //create
                         //make sure to write the ID to the sync me attribute
 
+                        F1toPCO.Model.PCO.person pcop = new F1toPCO.Model.PCO.person();
+                        this.UpdatePerson(p, ref pcop);
 
-                        //F1toPCO.Model.PCO.person pcop = new F1toPCO.Model.PCO.person();
-                        //pcop.firstname = p.firstName;
-                        //pcop.lastname = p.lastName;
-                        //pcop.name = p.firstName + " " + (string.IsNullOrEmpty(p.goesByName) ? p.lastName : p.goesByName + " " + p.lastName);
-                        //this.UpdatePerson(p, ref pcop);
-
-                        //payload = this.SerializeEntity(pcop);
-
-                        //this.PCOCreatePerson(payload);
-                        //Check PCO to see if user exists.
-                        //Remember to write the ID back to the attribute for this user if we find one.
+                        this.PCOCreatePerson(this.SerializeEntity(pcop));
                     }
                     else {
                         //Multiples.  Need user input.
-
+                        //See if we can narrow it down to one user based on the email.
+                        //if not, then we need user input.
+                        if (!this.FindMatchViaEmailAndUpdate(p, people)) {
+                            Model.MatchHelper matches = new Model.MatchHelper();
+                            matches.F1Person = p;
+                            matches.PCOPeople = people;
+                            this.Matches.Add(matches);
+                        }
                     }
-
-                    //F1toPCO.Model.PCO.person pcop = new F1toPCO.Model.PCO.person();
-                    //pcop.firstname = p.firstName;
-                    //pcop.lastname = p.lastName;
-                    //pcop.name = p.firstName + " " + (string.IsNullOrEmpty(p.goesByName) ? p.lastName : p.goesByName + " " + p.lastName);
-                    //this.UpdatePerson(p, ref pcop);
-
-                    //payload = this.SerializeEntity(pcop);
-
-                    //this.PCOCreatePerson(payload);
-                    //Check PCO to see if user exists.
-                    //Remember to write the ID back to the attribute for this user if we find one.
-
                 }
             }
 
-            return View();
+            if (this.Matches.Count > 0) {
+                return RedirectToAction("MultipleMatches");
+            }
+            else {
+                return View("Success");
+            }
+        }
+
+        public ActionResult MultipleMatches() {
+            return View(this.Matches);
         }
 
         public ActionResult Trouble() {
@@ -348,6 +359,23 @@ namespace F1toPCO.Controllers {
 
         #region Helpers
 
+        private bool FindMatchViaEmailAndUpdate(F1toPCO.Model.F1.person f1Person, F1toPCO.Model.PCO.people pcoPeople) {
+            var email = f1Person.communications.items.Where(e => e.communicationType.name == "Email").FirstOrDefault().communicationValue;
+
+            if (email != null) {
+                var filteredPerson = pcoPeople.person.Where(x =>
+                                                       x.contactData.emailAddresses.emailAddress == x.contactData.emailAddresses.emailAddress.Where(y =>
+                                                                                                                                                    y.address == email))
+                                                       .FirstOrDefault();
+                if (filteredPerson != null) {
+                    this.UpdatePerson(f1Person, ref filteredPerson);
+                    this.PCOUpdatePerson(this.SerializeEntity(filteredPerson), filteredPerson.id.Value);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void UpdateEmailCommunications(F1toPCO.Model.F1.communications f1Emails, F1toPCO.Model.PCO.emailAddresses pcoEmails) {
             foreach (F1toPCO.Model.F1.EntityType et in F1toPCO.Model.F1.emailSyncType.Items) {
                 F1toPCO.Model.F1.communication tmpF1Email = f1Emails.items.Where(y => y.communicationType.name == et.F1Type).FirstOrDefault();
@@ -400,6 +428,9 @@ namespace F1toPCO.Controllers {
         }
 
         private void UpdatePerson(F1toPCO.Model.F1.person f1Person, ref F1toPCO.Model.PCO.person pcoPerson) {
+
+            pcoPerson.firstname = string.IsNullOrEmpty(f1Person.goesByName) ? f1Person.firstName : f1Person.goesByName;
+            pcoPerson.lastname = f1Person.lastName;
 
             //Emails
             F1toPCO.Model.F1.communications emailComms = new F1toPCO.Model.F1.communications();
@@ -572,10 +603,10 @@ namespace F1toPCO.Controllers {
             using (RestResponse response = F1Client.Request(request)) {
                 if (response.StatusCode == HttpStatusCode.OK) {
                     using (StreamReader streamReader = new StreamReader(response.ContentStream)) {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(attributeGroups));
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(Model.F1.attributeGroups));
 
                         // Deserialize the response into a Person object.
-                        attributeGroups attributes = xmlSerializer.Deserialize(streamReader) as attributeGroups;
+                        Model.F1.attributeGroups attributes = xmlSerializer.Deserialize(streamReader) as Model.F1.attributeGroups;
 
                         var id = (from a in attributes.attributeGroup
                                   from y in a.attribute
@@ -672,17 +703,17 @@ namespace F1toPCO.Controllers {
 
         private bool PCOCreatePerson(string xml) {
 
-            var request = new RestRequest {
-                Path = "people.xml",
-                Method = WebMethod.Post,
-                Entity = xml
-            };
+            //var request = new RestRequest {
+            //    Path = "people.xml",
+            //    Method = WebMethod.Post,
+            //    Entity = xml
+            //};
 
-            RestResponse response = PCOClient.Request(request);
-            if (response.StatusCode == HttpStatusCode.OK) {
-                return true;
-            }
-            return false;
+            //RestResponse response = PCOClient.Request(request);
+            //if (response.StatusCode == HttpStatusCode.OK) {
+            //    return true;
+            //}
+            return true;
         }
 
         private bool PCOUpdatePerson(string xml, string id) {

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace F1toPCO.Models {
+namespace F1toPCO.Model {
     public class BaseModel : INotifyPropertyChanged {
                 
         [XmlIgnore]

@@ -8,10 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Xml.Serialization;
-using F1toPCO.Model;
 using System.Collections.Generic;
-using F1toPCO.Models;
 
 namespace F1toPCO.Model.F1{
 

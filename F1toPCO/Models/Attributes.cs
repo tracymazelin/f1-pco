@@ -8,10 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Xml.Serialization;
 using System.Collections.Generic;
 
-namespace F1toPCO.Model {
+namespace F1toPCO.Model.F1 {
 
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlRoot("attributes")]
