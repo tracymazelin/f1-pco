@@ -28,21 +28,25 @@ namespace F1toPCO.Model.F1 {
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
     public partial class attributeGroup {
 
-        private object nameField;
+        public attributeGroup() {
+            attributeField = new List<attribute>();
+        }
+
+        private string nameField = "";
 
         private List<attribute> attributeField;
 
-        private string uriField;
+        private string uriField = "";
 
-        private string oldIDField;
+        private string oldIDField = "";
 
         private bool oldIDFieldSpecified;
 
-        private string idField;
+        private string idField = "";
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public object name {
+        [System.Xml.Serialization.XmlElementAttribute(ElementName = "name")]
+        public string name {
             get {
                 return this.nameField;
             }

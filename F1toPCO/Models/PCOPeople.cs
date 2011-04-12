@@ -449,7 +449,7 @@ namespace F1toPCO.Model.PCO {
 
         private List<address> addressField;
 
-        private string typeField;
+        private string typeField = "array";
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("address", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -463,7 +463,7 @@ namespace F1toPCO.Model.PCO {
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlAttributeAttribute("type")]
         public string type {
             get {
                 return this.typeField;
@@ -575,7 +575,7 @@ namespace F1toPCO.Model.PCO {
 
         private List<emailAddress> emailAddressField;
 
-        private string typeField;
+        private string typeField = "array";
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("email-address", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -589,7 +589,7 @@ namespace F1toPCO.Model.PCO {
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlAttributeAttribute("type")]
         public string type {
             get {
                 return this.typeField;
@@ -662,7 +662,7 @@ namespace F1toPCO.Model.PCO {
 
         private List<phoneNumber> phoneNumberField;
 
-        private string typeField;
+        private string typeField = "array";
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("phone-number", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -676,7 +676,7 @@ namespace F1toPCO.Model.PCO {
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.Xml.Serialization.XmlAttributeAttribute("type")]
         public string type {
             get {
                 return this.typeField;

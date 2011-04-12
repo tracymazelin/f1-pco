@@ -23,29 +23,29 @@ namespace F1toPCO.Model.F1 {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    //[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    [System.Xml.Serialization.XmlRoot("attribute")]
     public partial class peopleAttribute {
 
-        private string _id;
+        private string _id = "";
 
-        private string _uri;
+        private string _uri = "";
 
-        private person _person;
+        private smallPerson _person = new smallPerson();
 
-        private attributeGroup _attributeGroup;
+        private attributeGroup _attributeGroup = new attributeGroup();
 
-        private string _startDate;
+        private string _startDate = "";
 
-        private string _endDate;
+        private string _endDate = "";
 
-        private string _comment;
+        private string _comment = "";
 
-        private string _createdDate;
+        private string _createdDate = "";
 
-        private string _lastUpdatedDate;
+        private string _lastUpdatedDate = "";
 
         public peopleAttribute() {
-
         }
 
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "id")]
@@ -69,7 +69,7 @@ namespace F1toPCO.Model.F1 {
         }
 
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "person", IsNullable = true)]
-        public person person {
+        public smallPerson person {
             get {
                 return this._person;
             }
@@ -77,7 +77,7 @@ namespace F1toPCO.Model.F1 {
                 this._person = value;
             }
         }
-    
+
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "attributeGroup", IsNullable = true)]
         public attributeGroup attributeGroup {
             get {
@@ -118,7 +118,7 @@ namespace F1toPCO.Model.F1 {
             }
         }
 
-        [System.Xml.Serialization.XmlElementAttribute(ElementName = "createDate", IsNullable = true)]
+        [System.Xml.Serialization.XmlElementAttribute(ElementName = "createdDate", IsNullable = true)]
         public string createdDate {
             get {
                 return this._createdDate;
@@ -127,7 +127,7 @@ namespace F1toPCO.Model.F1 {
                 this._createdDate = value;
             }
         }
-        
+
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "lastUpdatedDate", IsNullable = true)]
         public string lastUpdatedDate {
             get {
@@ -135,6 +135,32 @@ namespace F1toPCO.Model.F1 {
             }
             set {
                 this._lastUpdatedDate = value;
+            }
+        }
+    }
+
+    public partial class smallPerson {
+        private string _id = "";
+
+        private string _uri = "";
+
+        [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "id")]
+        public string id {
+            get {
+                return this._id;
+            }
+            set {
+                this._id = value;
+            }
+        }
+
+        [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "uri")]
+        public string uri {
+            get {
+                return this._uri;
+            }
+            set {
+                this._uri = value;
             }
         }
     }

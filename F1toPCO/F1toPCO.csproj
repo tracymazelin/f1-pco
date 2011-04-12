@@ -95,6 +95,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Views\Home\MultipleMatches.aspx" />
+    <Content Include="Views\Home\NonMatches.aspx" />
     <Content Include="Views\Home\StartSync.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

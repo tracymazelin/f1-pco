@@ -26,13 +26,11 @@ namespace F1toPCO.Model.F1 {
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
     public partial class attribute {
 
-        private string _id;
+        private string _id = ""; 
 
-        private string _uri;
+        private string _uri = "";
 
-        private string _oldId;
-
-        private string _name;
+        private string _name = "";
 
         public attribute() {
 
@@ -57,16 +55,6 @@ namespace F1toPCO.Model.F1 {
                 this._uri = value;
             }
         }
-
-       [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "oldID")]
-       public string oldId {
-           get {
-               return this._oldId;
-           }
-           set {
-               this._oldId = value;
-           }
-       }
 
        [System.Xml.Serialization.XmlElementAttribute(ElementName = "name", IsNullable=false)]
        public string name {

@@ -41,85 +41,85 @@ namespace F1toPCO.Model.F1 {
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
     public partial class person : BaseModel {
 
-        private string titleField;
+        private string titleField = "";
 
-        private string salutationField;
+        private string salutationField = "";
 
-        private string prefixField;
+        private string prefixField = "";
 
-        private string firstNameField;
+        private string firstNameField = "";
 
-        private string lastNameField;
+        private string lastNameField = "";
 
-        private string suffixField;
+        private string suffixField = "";
 
-        private string middleNameField;
+        private string middleNameField= "";
 
-        private string goesByNameField;
+        private string goesByNameField="";
 
-        private string formerNameField;
+        private string formerNameField = "";
 
-        private System.Nullable<gender> genderField;
+        private System.Nullable<gender> genderField = new gender();
 
-        private string dateOfBirthField;
+        private string dateOfBirthField = "";
 
-        private System.Nullable<maritalStatus> maritalStatusField;
+        private System.Nullable<maritalStatus> maritalStatusField = new maritalStatus();
 
-        private householdMemberType householdMemberTypeField;
+        private householdMemberType householdMemberTypeField = new householdMemberType();
 
-        private string isAuthorizedField;
+        private string isAuthorizedField = "";
 
-        private status statusField;
+        private status statusField = new status();
 
-        private occupation occupationField;
+        private occupation occupationField = new occupation();
 
-        private string employerField;
+        private string employerField = "";
 
-        private school schoolField;
+        private school schoolField = new school();
 
-        private communications communicationsField;
+        private communications communicationsField = new communications();
 
-        private addresses addressesField;
+        private addresses addressesField = new addresses();
 
-        private peopleAttributes peopleAttributesField;
+        private peopleAttributes peopleAttributesField = new peopleAttributes();
 
-        private denomination denominationField;
+        private denomination denominationField = new denomination();
 
-        private string formerChurchField;
+        private string formerChurchField = "";
 
-        private string barCodeField;
+        private string barCodeField = "";
 
-        private string memberEnvelopeCodeField;
+        private string memberEnvelopeCodeField = "";
 
-        private string defaultTagCommentField;
+        private string defaultTagCommentField = "";
 
-        private weblink weblinkField;
+        private weblink weblinkField = new weblink();
 
-        private string solicitField;
+        private string solicitField = "";
 
-        private string thankField;
+        private string thankField = "";
 
-        private string firstRecordField;
+        private string firstRecordField = "";
 
-        private string lastMatchDateField;
+        private string lastMatchDateField = "";
 
-        private string createdDateField;
+        private string createdDateField = "";
 
-        private string lastUpdatedDateField;
+        private string lastUpdatedDateField = "";
 
-        private string uriField;
+        private string uriField = "";
 
-        private string imageURIField;
+        private string imageURIField = "";
 
-        private string idField;
+        private string idField = "";
 
-        private string oldIDField;
+        private string oldIDField = "";
 
-        private string oldHouseholdIDField;
+        private string oldHouseholdIDField = "";
 
-        private string iCodeField;
+        private string iCodeField = "";
 
-        private string householdIDField;
+        private string householdIDField = "";
 
         public person() {
 

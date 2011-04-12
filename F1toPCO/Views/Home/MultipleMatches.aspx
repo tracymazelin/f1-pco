@@ -5,17 +5,24 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-   <div style="width:50%">
+    <% using (Html.BeginForm("ProcessMatches", "Home", FormMethod.Post)) { %>
+    <table>
        <%foreach (F1toPCO.Model.MatchHelper m in Model) { %>
-       <div id="f1Person" style="float:left">
-            <b><%=m.F1Person.firstName %>&nbsp;<%=m.F1Person.lastName %><b><br/>
-            <%= m.F1Person %>
-       </div>
-       <div style="float:right">
+       <tr>
+            <td>
+                <b><%=m.F1Person.firstName%>&nbsp;<%=m.F1Person.lastName%><b><br/>
+                <%= m.F1Person%>
+            </td>
+            <td>
             <%foreach (F1toPCO.Model.PCO.person p in m.PCOPeople.person) { %>
-                <%= p.firstname %>&nbsp;<%=p.lastname %><br/>
+                <%= p.firstname%>&nbsp;<%=p.lastname%><br/>
+                <%= Html.RadioButton(m.F1Person.id, p.id.Value, false, new { id = m.F1Person.id }) %><label for="<%= m.F1Person.id %>"><%=p.id.Value %></label><br/>
             <% } %>
-       </div>
+            <%= Html.RadioButton(m.F1Person.id, 0, false, new { id = m.F1Person.id }) %><label for="<%= m.F1Person.id %>">Remove</label>
+            </td>
+       </tr>
        <% } %>
-   </div>
+       <tr><td colspan="2"><input type="submit" value="Save"></td></tr>
+       </table>
+       <% } %>
 </asp:Content>
