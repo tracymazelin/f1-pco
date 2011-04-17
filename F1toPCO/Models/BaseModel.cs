@@ -21,6 +21,5 @@ namespace F1toPCO.Model {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
     }
 }

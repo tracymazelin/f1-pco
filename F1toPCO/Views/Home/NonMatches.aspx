@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<List<F1toPCO.Model.MatchHelper>>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<F1toPCO.Model.MatchHelper>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	NoMatch
@@ -7,7 +7,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <% using (Html.BeginForm("ProcessNoMatches", "Home", FormMethod.Post)) { %>
     <table border="0" padding="5">
-    <%foreach (F1toPCO.Model.MatchHelper m in Model) { %>
+    <%foreach (F1toPCO.Model.MatchHelperData m in Model) { %>
         <tr>
             <td>
                 <b><%=m.F1Person.firstName %>&nbsp;<%=m.F1Person.lastName %><b><br/>

@@ -93,10 +93,13 @@
     <Compile Include="Util\PrivateConsts.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\ajax-loader.gif" />
     <Content Include="Global.asax" />
+    <Content Include="Views\Home\ChurchCode.aspx" />
     <Content Include="Views\Home\MultipleMatches.aspx" />
     <Content Include="Views\Home\NonMatches.aspx" />
-    <Content Include="Views\Home\StartSync.aspx" />
+    <Content Include="Views\Home\Ready.aspx" />
+    <Content Include="Views\Home\Success.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

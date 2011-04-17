@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace F1toPCO.Model.F1 {
 
@@ -17,6 +18,14 @@ namespace F1toPCO.Model.F1 {
     public class peopleAttributes {
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "attribute")]
         public List<peopleAttribute> peopleAttribute { get; set; }
+
+        public peopleAttribute FindByID(int id) {
+            var t = (from a in this.peopleAttribute
+                     from y in a.attributeGroup.attribute
+                     where y.id == id.ToString()
+                     select a).FirstOrDefault();
+            return t;
+        }
     }
 
     [System.SerializableAttribute()]
@@ -25,7 +34,7 @@ namespace F1toPCO.Model.F1 {
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     //[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
     [System.Xml.Serialization.XmlRoot("attribute")]
-    public partial class peopleAttribute {
+    public partial class peopleAttribute : BaseModel {
 
         private string _id = "";
 

@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace F1toPCO.Model.PCO {
 
@@ -18,6 +19,16 @@ namespace F1toPCO.Model.PCO {
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "person")]
         public List<person> person { get; set; }
 
+        public person FindByID(int id) {
+            return this.person.Find(x => x.id.Value == id.ToString());
+        }
+
+        public person FindByEmailAddress(string emailAddress) {
+            return this.person.Where(x =>
+                                     x.contactData.emailAddresses.emailAddress == x.contactData.emailAddresses.emailAddress.
+                                     Where(y => y.address == emailAddress))
+                                     .FirstOrDefault();
+        }
     }
 
     /// <remarks/>
@@ -102,6 +113,15 @@ namespace F1toPCO.Model.PCO {
         private contactData contactDataField;
 
         private properties propertiesField;
+
+        public bool IsDirty {
+            get {
+                return base.IsDirty && contactData.addresses.address.FindAll(a => a.IsDirty).Count > 0
+                                    && contactData.emailAddresses.emailAddress.FindAll(b => b.IsDirty).Count > 0
+                                    && contactData.phoneNumbers.phoneNumber.FindAll(c => c.IsDirty).Count > 0
+                                    && properties.property.FindAll(d=>d.IsDirty).Count > 0;
+            }
+        }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("first-name", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]

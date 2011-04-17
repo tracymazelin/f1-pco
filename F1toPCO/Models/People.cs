@@ -9,13 +9,13 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-
+using System.Linq;
 namespace F1toPCO.Model.F1 {
 
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlRoot("results")]
     public class people {
-        
+
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "person")]
         public List<person> items { get; set; }
 
@@ -30,6 +30,16 @@ namespace F1toPCO.Model.F1 {
 
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName = "additionalPages")]
         public string pages { get; set; }
+
+        public List<person> FindByAttributeID(int attributeID) {
+            var k = (from a in this.items
+                     from b in a.attributes.peopleAttribute
+                     from c in b.attributeGroup.attribute
+                     where c.id == attributeID.ToString()
+                     select a).ToList();
+            return k;
+        }
+
     }
 
     /// <remarks/>
@@ -53,9 +63,9 @@ namespace F1toPCO.Model.F1 {
 
         private string suffixField = "";
 
-        private string middleNameField= "";
+        private string middleNameField = "";
 
-        private string goesByNameField="";
+        private string goesByNameField = "";
 
         private string formerNameField = "";
 
@@ -121,10 +131,14 @@ namespace F1toPCO.Model.F1 {
 
         private string householdIDField = "";
 
-        public person() {
-
+        public bool IsDirty {
+            get {
+                return base.IsDirty && communications.items.FindAll(x => x.IsDirty).Count > 0 && 
+                                       addresses.items.FindAll(y => y.IsDirty).Count > 0 && 
+                                       attributes.peopleAttribute.FindAll(z=>z.IsDirty).Count > 0;
+            }
         }
-       
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "title", IsNullable = true)]
         public string title {
@@ -322,7 +336,7 @@ namespace F1toPCO.Model.F1 {
                 SetField(ref addressesField, value, "addresses");
             }
         }
-        
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "communications", IsNullable = true)]
         public communications communications {
