@@ -9,15 +9,21 @@
     <table>
        <%foreach (F1toPCO.Model.MatchHelperData m in Model) { %>
        <tr>
-            <td>
-                <b><%=m.F1Person.firstName%>&nbsp;<%=m.F1Person.lastName%><b><br/>
-                <%= m.F1Person%>
+            <td colapsn="2">
+                <% Html.RenderPartial("_F1Person", m.F1Person); %>
             </td>
             <td>
+            <%= Html.RadioButton(m.F1Person.id, -1, false, new { id = m.F1Person.id }) %><label for="<%= m.F1Person.id %>">Create new person</label><br/>
+            <table>
             <%foreach (F1toPCO.Model.PCO.person p in m.PCOPeople.person) { %>
-                <%= p.firstname%>&nbsp;<%=p.lastname%><br/>
-                <%= Html.RadioButton(m.F1Person.id, p.id.Value, false, new { id = m.F1Person.id }) %><label for="<%= m.F1Person.id %>"><%=p.id.Value %></label><br/>
+                <tr>
+                    <td>
+                        <%= Html.RadioButton(m.F1Person.id, p.id.Value, false, new { id = m.F1Person.id }) %>
+                        <% Html.RenderPartial("_PCOPerson", p); %>
+                    </td>
+                </tr>
             <% } %>
+            </table>
             <%= Html.RadioButton(m.F1Person.id, 0, false, new { id = m.F1Person.id }) %><label for="<%= m.F1Person.id %>">Remove</label>
             </td>
        </tr>

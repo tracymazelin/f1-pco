@@ -358,7 +358,9 @@ namespace F1toPCO.Controllers {
         }
 
         public ActionResult ProcessMatches() {
+            
             foreach (string f1ID in Request.Form) {
+                
                 Model.F1.person p = this.Matches.FindF1PersonByID(f1ID);
 
                 if (!this.AttributeID.HasValue) {
@@ -367,25 +369,39 @@ namespace F1toPCO.Controllers {
 
                 Model.F1.peopleAttribute peopleAttribute = p.attributes.FindByID(this.AttributeID.Value);
 
-                if (Request.Form[f1ID].ToString() != "0") {
+                string f1IndividualID = Request.Form[f1ID].ToString();
+                switch (Request.Form[f1ID].ToString()) {
+                    case "0":
+                        this.F1DeletePeopleAttribute(peopleAttribute);
+                        break;
 
-                    Model.PCO.person pcop = this.Matches.FindPCOPersonByID(Request.Form[f1ID].ToString());
-                    this.UpdatePerson(p, ref pcop);
+                    case "-1":
+                        Model.PCO.person newPCO = new Model.PCO.person();
+                        this.UpdatePerson(p, ref newPCO);
 
-                    Model.PCO.person createdPerson = this.PCOCreatePerson(this.SerializeEntity(pcop));
+                        Model.PCO.person createdPerson = this.PCOCreatePerson(this.SerializeEntity(newPCO));
 
-                    if (createdPerson != null) {
-                        peopleAttribute.comment = createdPerson.id.Value;
+                        if (createdPerson != null) {
+                            peopleAttribute.comment = createdPerson.id.Value;
+                            this.F1UpdatePeopleAttribute(peopleAttribute);
+                        }
+                        break;
+
+                    default:
+                        var pcoPerson = this.Matches.FindPCOPersonByID(Request.Form[f1ID].ToString());
+                        this.UpdatePerson(p, ref pcoPerson);
+
+                        this.PCOUpdatePerson(this.SerializeEntity(pcoPerson), Request.Form[f1ID].ToString());
+
+                        peopleAttribute.comment = pcoPerson.id.Value;
                         this.F1UpdatePeopleAttribute(peopleAttribute);
-                    }
-                }
-                else {
-                    this.F1DeletePeopleAttribute(peopleAttribute);
-                }
+                        
+                        break;
+                }                
             }
             this.Matches.Clear();
 
-            return View();
+            return View("Success");
         }
 
         public ActionResult Trouble() {
@@ -555,8 +571,8 @@ namespace F1toPCO.Controllers {
         /// <param name="pcoPhones"></param>
         private void UpdatePhoneCommunications(F1toPCO.Model.F1.communications f1Phones, F1toPCO.Model.PCO.phoneNumbers pcoPhones) {
             foreach (F1toPCO.Model.F1.EntityType et in F1toPCO.Model.F1.phoneSyncType.Items) {
-                F1toPCO.Model.F1.communication tmpF1Phone = f1Phones.items.Where(y => y.communicationType.name == et.F1Type).FirstOrDefault();
-                F1toPCO.Model.PCO.phoneNumber tmpPCOPhone = pcoPhones.phoneNumber.Where(x => x.location == et.PCOType).FirstOrDefault();
+                F1toPCO.Model.F1.communication tmpF1Phone = f1Phones.FindByCommunicationTypeName(et.F1Type);
+                F1toPCO.Model.PCO.phoneNumber tmpPCOPhone = pcoPhones.FindByLocation(et.PCOType);
 
                 if (tmpF1Phone != null) {
                     if (tmpPCOPhone == null) {
@@ -566,16 +582,14 @@ namespace F1toPCO.Controllers {
                         pcoPhones.phoneNumber.Add(tmpPCOPhone);
                     }
                     else {
-                        tmpPCOPhone.location = tmpF1Phone.communicationValue;
+                        tmpPCOPhone.number = tmpF1Phone.communicationValue;
                     }
                 }
                 else {
                     if (tmpPCOPhone != null) {
                         pcoPhones.phoneNumber.Remove(tmpPCOPhone);
                     }
-
                 }
-
             }
         }
 

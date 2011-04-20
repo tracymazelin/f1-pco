@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-
+using System.Linq;
 namespace F1toPCO.Model.F1{
 
     [System.SerializableAttribute()]
@@ -17,6 +17,10 @@ namespace F1toPCO.Model.F1{
     public class addresses {
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "address")]
         public List<address> items { get; set; }
+
+        public address FindByType(string type) {
+            return this.items.FirstOrDefault(x => x.addressType.name == type);
+        }
     }
 
     /// <remarks/>

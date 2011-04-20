@@ -471,6 +471,10 @@ namespace F1toPCO.Model.PCO {
 
         private string typeField = "array";
 
+        public address FindByLocation(string location) {
+            return this.address.FirstOrDefault(x => x.location == location);
+        }
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("address", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public List<address> address {
@@ -683,6 +687,10 @@ namespace F1toPCO.Model.PCO {
         private List<phoneNumber> phoneNumberField;
 
         private string typeField = "array";
+
+        public phoneNumber FindByLocation(string location) {
+            return this.phoneNumber.FirstOrDefault(x => x.location == location);
+        }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("phone-number", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]

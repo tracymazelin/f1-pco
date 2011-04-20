@@ -17,12 +17,13 @@
 #footer 
 {
     background-color: #766727;
-    height: 40px;
-    margin: -40px;
-    position:relative;
-    
 }
 
+table 
+{
+    width: 75%;
+    border: 0; 
+}
 .myButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #f5978e;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #f5978e;

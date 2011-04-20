@@ -100,6 +100,8 @@
     <Content Include="Views\Home\NonMatches.aspx" />
     <Content Include="Views\Home\Ready.aspx" />
     <Content Include="Views\Home\Success.aspx" />
+    <Content Include="Views\Shared\_F1Person.ascx" />
+    <Content Include="Views\Shared\_PCOPerson.ascx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

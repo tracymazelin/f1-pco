@@ -18,8 +18,11 @@ namespace F1toPCO.Model.F1 {
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "communication")]
         public List<communication> items { get; set; }
 
+        public List<communication> FindByGeneralCommunicationType(communicationGeneralType generalTypeName) {
+            return this.items.FindAll(x => x.communicationGeneralType == generalTypeName);
+        } 
         public communication FindByCommunicationTypeName(string communicationTypeName) {
-            return this.items.Where(e => e.communicationType.name == "Email").FirstOrDefault();
+            return this.items.FirstOrDefault(e => e.communicationType.name == communicationTypeName);
         }
     }
 
