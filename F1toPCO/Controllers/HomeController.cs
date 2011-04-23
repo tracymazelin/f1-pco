@@ -179,8 +179,9 @@ namespace F1toPCO.Controllers {
             else {
                 this.GetF1RequestToken();
             }
-
-            return Redirect(string.Format(Util.URL.f1AuthorizeUrl, this.F1ChurchCode, this.F1RequestToken.Value, Util.URL.f1CalBack));
+           
+            string callback = Url.ToPublicUrl(new Uri(Util.URL.f1CalBack, UriKind.Relative));
+            return Redirect(string.Format(Util.URL.f1AuthorizeUrl, this.F1ChurchCode, this.F1RequestToken.Value, callback));
         }
 
         public ActionResult CallBack() {
@@ -358,9 +359,9 @@ namespace F1toPCO.Controllers {
         }
 
         public ActionResult ProcessMatches() {
-            
+
             foreach (string f1ID in Request.Form) {
-                
+
                 Model.F1.person p = this.Matches.FindF1PersonByID(f1ID);
 
                 if (!this.AttributeID.HasValue) {
@@ -395,9 +396,9 @@ namespace F1toPCO.Controllers {
 
                         peopleAttribute.comment = pcoPerson.id.Value;
                         this.F1UpdatePeopleAttribute(peopleAttribute);
-                        
+
                         break;
-                }                
+                }
             }
             this.Matches.Clear();
 
@@ -454,7 +455,7 @@ namespace F1toPCO.Controllers {
                 Token = this.F1RequestToken.Value,
                 TokenSecret = this.F1RequestToken.Secret
             };
-
+                        
             var client = new RestClient {
                 Authority = string.Format(Util.URL.f1BaseUrl, this.F1ChurchCode),
                 VersionPath = "v1",
@@ -480,7 +481,7 @@ namespace F1toPCO.Controllers {
                 ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
                 ConsumerKey = Util.PrivateConsts.pcoConsumerKey,
                 ConsumerSecret = Util.PrivateConsts.pcoConsumerSecret,
-                CallbackUrl = Util.URL.pcoCallback
+                CallbackUrl = Url.ToPublicUrl(new Uri(Util.URL.pcoCallback, UriKind.Relative))
             };
 
             var pcoClient = new RestClient {

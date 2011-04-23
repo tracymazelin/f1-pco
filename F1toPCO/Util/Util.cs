@@ -6,10 +6,11 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using F1toPCO.Util;
+using System.Web.Mvc;
 
 namespace F1toPCO.Util
 {
-    public class URL {
+    public static class URL {
         //Staging
         //public const string f1BaseUrl = "https://{0}.staging.fellowshiponeapi.com";
         //public const string f1AuthorizeUrl = "https://{0}.staging.fellowshiponeapi.com/v1/PortalUser/Login?oauth_token={1}&oauth_callback={2}";
@@ -17,12 +18,11 @@ namespace F1toPCO.Util
         //Prod
         public const string f1BaseUrl = "https://{0}.fellowshiponeapi.com";
         public const string f1AuthorizeUrl = "https://{0}.fellowshiponeapi.com/v1/PortalUser/Login?oauth_token={1}&oauth_callback={2}";
+        public const string f1CalBack = "CallBack?provider=f1";
         
-        public const string f1CalBack = "http://localhost/F1toPCO/CallBack?provider=f1";
-
         public const string pcoBaseUrl = "https://www.planningcenteronline.com";
         public const string pcoAuthorizeUrl = "https://www.planningcenteronline.com/oauth/authorize?oauth_token={0}";
-        public const string pcoCallback = "http://localhost/F1toPCO/CallBack?provider=pco";
+        public const string pcoCallback = "CallBack?provider=pco";
     }
 
     public class Token

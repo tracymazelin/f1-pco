@@ -1,5 +1,8 @@
-[Bb]in
-[Oo]bj
+[Oo]bj/
+[Bb]in/
 *.suo
 *.user
+/TestResults
+*.vspscc
+*.vssscc
 error*.xml
