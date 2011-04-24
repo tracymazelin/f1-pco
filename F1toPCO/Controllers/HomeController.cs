@@ -179,7 +179,7 @@ namespace F1toPCO.Controllers {
             else {
                 this.GetF1RequestToken();
             }
-           
+
             string callback = Url.ToPublicUrl(new Uri(Util.URL.f1CalBack, UriKind.Relative));
             return Redirect(string.Format(Util.URL.f1AuthorizeUrl, this.F1ChurchCode, this.F1RequestToken.Value, callback));
         }
@@ -348,10 +348,10 @@ namespace F1toPCO.Controllers {
             this.NoMatches.Clear();
 
             if (this.Matches.Count > 0) {
-                RedirectToAction("MultipleMatches");
+                return RedirectToAction("MultipleMatches");
             }
 
-            return View();
+            return View("Success");
         }
 
         public ActionResult MultipleMatches() {
@@ -455,7 +455,7 @@ namespace F1toPCO.Controllers {
                 Token = this.F1RequestToken.Value,
                 TokenSecret = this.F1RequestToken.Secret
             };
-                        
+
             var client = new RestClient {
                 Authority = string.Format(Util.URL.f1BaseUrl, this.F1ChurchCode),
                 VersionPath = "v1",
