@@ -7,5 +7,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
     <h2>Success</h2>
+    <div>
+        Congratulations.  You have successfully synced your data from Fellowship One to Planning Center online.
+    </div>
 
 </asp:Content>

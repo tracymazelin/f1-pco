@@ -5,13 +5,36 @@
 
 #header 
 {
-    background-color: #1C324D;
-    height: 50px;
+    background: #254987; /* old browsers */
+    background: -moz-linear-gradient(top, #254987 0%, #19315B 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#254987), color-stop(100%,#19315B)); /* webkit */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#254987', endColorstr='#19315B',GradientType=0 ); /* ie */
+    background: -o-linear-gradient(top, #254987 0%,#19315B 100%); /* opera */
+    box-shadow: 0 0 3px black;
+    -webkit-box-shadow: 0 0 3px black;
+    -moz-box-shadow: -3px 0 3px black;
+    height: 60px;
+}
+
+#title 
+{
+    display:table-cell;
+    width:960px;
+    vertical-align:middle;
+    height:60px;
+}
+
+
+#instructions 
+{
+    margin: 15px 0 10px;   
 }
 
 #header h1 
 {
     color: #AB9D61;
+    font-size: 1.5em;
+    text-shadow: #13181C 0px 1px 1px;
 }
 
 #footer 
@@ -19,11 +42,48 @@
     background-color: #766727;
 }
 
+body 
+{
+    font: 1em Calibri, sans-serif;
+    line-height: 1.22;
+}
+
 table 
 {
-    width: 75%;
-    border: 0; 
+    width: 100%;
+    border: 0;
+    border-collapse:collapse
 }
+
+h2 
+{
+    font-size: 1.5em;
+    padding: 5px 10px 15px;
+}
+
+.section 
+{
+    background: #f3f3f3;
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid;
+    border-color: #EEE #DDD #CCC;
+}
+
+th 
+{
+    width: 25%;
+    text-align: right;
+    padding: 10px 10px 0 0;
+    vertical-align: top;
+}
+
+td 
+{
+    vertical-align: top;
+    padding: 10px 0 0 0; 
+}
+
 .myButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #f5978e;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #f5978e;
@@ -392,3 +452,4 @@ table
 .clearfix {
 	display: block;
 }
+
