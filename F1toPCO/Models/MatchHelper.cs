@@ -18,7 +18,16 @@ namespace F1toPCO.Model {
         }
 
         public Model.F1.person FindF1PersonByID(string id) {
-            return this.Where(x => x.F1Person.id == id.ToString()).FirstOrDefault().F1Person;
+            MatchHelperData temp = null;
+
+            temp = this.FirstOrDefault(x => x.F1Person.id == id.ToString());
+
+            if (temp != null) {
+                return temp.F1Person;
+            }
+            else {
+                return null;
+            }
         }
     }
 }

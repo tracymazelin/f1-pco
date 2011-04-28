@@ -220,98 +220,100 @@ namespace F1toPCO.Controllers {
             //that should be added to the people that need to be synced.
             this.AttributeID = this.F1GetAttributeID("SyncMe");
 
-            //TODO:
-            //IF THE ATTRIBUTE ID IS NULL THEN WE NEED TO STOP AND TELL THE USER TO CREATE AN ATTRIBUTE CALLED SYNCME
+            if (this.AttributeID != 0) {
+                //TODO:
+                //IF THE LAST RUN DATE IS NULL WE JUST NEED TO GET PEOPLE BY ATTRIBUTE INSTEAD OF LAST UPDATED!!!!!
 
-            //TODO:
-            //IF THE LAST RUN DATE IS NULL WE JUST NEED TO GET PEOPLE BY ATTRIBUTE INSTEAD OF LAST UPDATED!!!!!
+                //Get the people that have been updated since the last time we ran
+                Model.F1.people f1People = this.F1GetPeopleByLastUpdatedDate("1/1/2011");
 
-            //Get the people that have been updated since the last time we ran
-            Model.F1.people f1People = this.F1GetPeopleByLastUpdatedDate("1/1/2011");
+                //Filter out the people who don't have the SyncMe Attribute.
+                List<Model.F1.person> filteredPeople = f1People.FindByAttributeID(this.AttributeID.Value);
 
-            //Filter out the people who don't have the SyncMe Attribute.
-            List<Model.F1.person> filteredPeople = f1People.FindByAttributeID(this.AttributeID.Value);
+                foreach (Model.F1.person p in filteredPeople) {
+                    //Get the comment for the attribute to see if we already now the PCOID.
+                    Model.F1.peopleAttribute peopleAttribute = p.attributes.FindByID(this.AttributeID.Value);
 
-            foreach (Model.F1.person p in filteredPeople) {
-                //Get the comment for the attribute to see if we already now the PCOID.
-                Model.F1.peopleAttribute peopleAttribute = p.attributes.FindByID(this.AttributeID.Value);
+                    if (peopleAttribute != null && !string.IsNullOrEmpty(peopleAttribute.comment)) {
+                        /// PCO ID FOUND
+                        /// We have the PCO ID and can update the record with confidence that it is
+                        /// the correct person.
 
-                if (peopleAttribute != null && !string.IsNullOrEmpty(peopleAttribute.comment)) {
-                    /// PCO ID FOUND
-                    /// We have the PCO ID and can update the record with confidence that it is
-                    /// the correct person.
-
-                    person = this.PCOGetPersonByID(Convert.ToInt32(peopleAttribute.comment));
-                    if (person != null) {
-                        this.UpdatePerson(p, ref person);
-                        this.PCOUpdatePerson(this.SerializeEntity(person), peopleAttribute.comment);
-                    }
-                    else {
-                        this.NoMatches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = null });
-                    }
-                }
-                else {
-                    /// NO ID FOUND ///
-                    /// Didn't find a PCO ID in the attribute so we need to look up by name.
-
-                    Model.PCO.people people = null;
-                    people = this.PCOGetPersonByName(p.lastName + ", " + (string.IsNullOrEmpty(p.goesByName) ? p.firstName.Substring(0, 1) : p.goesByName.Substring(0, 1)));
-
-                    if (people.person.Count == 1) {
-                        /// ONE MATCH FOUND ///
-                        /// Update the PCO person based on the F1 data.  If data has been changed
-                        /// save it to PCO.  Also add the PCO ID to the F1 attribute so we don't
-                        /// have to look them up my name next time.
-
-                        Model.PCO.person matchPerson = people.person.FirstOrDefault();
-
-                        this.UpdatePerson(p, ref matchPerson);
-                        if (matchPerson.IsDirty) {
-                            this.PCOUpdatePerson(this.SerializeEntity(matchPerson), matchPerson.id.Value);
+                        person = this.PCOGetPersonByID(Convert.ToInt32(peopleAttribute.comment));
+                        if (person != null) {
+                            this.UpdatePerson(p, ref person);
+                            this.PCOUpdatePerson(this.SerializeEntity(person), peopleAttribute.comment);
                         }
-
-                        peopleAttribute.comment = matchPerson.id.Value;
-                        this.F1UpdatePeopleAttribute(peopleAttribute);
-                    }
-                    else if (people.person.Count == 0) {
-                        ///NO MATCH FOUND ///
-                        ///Just need to add it to the no match filter.
-
-                        this.NoMatches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = null });
+                        else {
+                            this.NoMatches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = null });
+                        }
                     }
                     else {
-                        /// MULTIPLE MATCHES ///
-                        /// See if we can narrow down who we are looking for based on email address.
-                        /// If we can't find them based on email then add them to the no match collection.
+                        /// NO ID FOUND ///
+                        /// Didn't find a PCO ID in the attribute so we need to look up by name.
 
-                        Model.PCO.person filteredPerson = null;
-                        var email = p.communications.FindByCommunicationTypeName("Email");
+                        Model.PCO.people people = null;
+                        people = this.PCOGetPersonByName(p.lastName + ", " + (string.IsNullOrEmpty(p.goesByName) ? p.firstName.Substring(0, 1) : p.goesByName.Substring(0, 1)));
 
-                        if (email != null) {
-                            filteredPerson = people.FindByEmailAddress(email.communicationValue);
+                        if (people.person.Count == 1) {
+                            /// ONE MATCH FOUND ///
+                            /// Update the PCO person based on the F1 data.  If data has been changed
+                            /// save it to PCO.  Also add the PCO ID to the F1 attribute so we don't
+                            /// have to look them up my name next time.
 
-                            if (filteredPerson != null) {
-                                this.UpdatePerson(p, ref filteredPerson);
-                                this.PCOUpdatePerson(this.SerializeEntity(filteredPerson), filteredPerson.id.Value);
+                            Model.PCO.person matchPerson = people.person.FirstOrDefault();
 
+                            this.UpdatePerson(p, ref matchPerson);
+                            if (matchPerson.IsDirty) {
+                                this.PCOUpdatePerson(this.SerializeEntity(matchPerson), matchPerson.id.Value);
+                            }
+
+                            peopleAttribute.comment = matchPerson.id.Value;
+                            this.F1UpdatePeopleAttribute(peopleAttribute);
+                        }
+                        else if (people.person.Count == 0) {
+                            ///NO MATCH FOUND ///
+                            ///Just need to add it to the no match filter.
+
+                            this.NoMatches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = null });
+                        }
+                        else {
+                            /// MULTIPLE MATCHES ///
+                            /// See if we can narrow down who we are looking for based on email address.
+                            /// If we can't find them based on email then add them to the no match collection.
+
+                            Model.PCO.person filteredPerson = null;
+                            var email = p.communications.FindByCommunicationTypeName("Email");
+
+                            if (email != null) {
+                                filteredPerson = people.FindByEmailAddress(email.communicationValue);
+
+                                if (filteredPerson != null) {
+                                    this.UpdatePerson(p, ref filteredPerson);
+                                    this.PCOUpdatePerson(this.SerializeEntity(filteredPerson), filteredPerson.id.Value);
+
+                                }
+                            }
+
+                            if (filteredPerson == null) {
+                                this.Matches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = people });
                             }
                         }
-
-                        if (filteredPerson == null) {
-                            this.Matches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = people });
-                        }
                     }
                 }
-            }
 
-            if (this.NoMatches.Count > 0) {
-                return RedirectToAction("NonMatches");
-            }
+                if (this.NoMatches.Count > 0) {
+                    return RedirectToAction("NonMatches");
+                }
 
-            if (this.Matches.Count > 0) {
-                return RedirectToAction("MultipleMatches");
+                if (this.Matches.Count > 0) {
+                    return RedirectToAction("MultipleMatches");
+                }
+                return View("Success");
             }
-            return View("Success");
+            else {
+                return View("NoAttribute");
+            }
         }
 
         public ActionResult NonMatches() {
@@ -542,8 +544,8 @@ namespace F1toPCO.Controllers {
         /// <param name="pcoEmails"></param>
         private void UpdateEmailCommunications(F1toPCO.Model.F1.communications f1Emails, F1toPCO.Model.PCO.emailAddresses pcoEmails) {
             foreach (F1toPCO.Model.F1.EntityType et in F1toPCO.Model.F1.emailSyncType.Items) {
-                F1toPCO.Model.F1.communication tmpF1Email = f1Emails.items.Where(y => y.communicationType.name == et.F1Type).FirstOrDefault();
-                F1toPCO.Model.PCO.emailAddress tmpPCOEmail = pcoEmails.emailAddress.Where(x => x.location == et.PCOType).FirstOrDefault();
+                F1toPCO.Model.F1.communication tmpF1Email = f1Emails.FindByCommunicationTypeName(et.F1Type);
+                F1toPCO.Model.PCO.emailAddress tmpPCOEmail = pcoEmails.FindByLocation(et.PCOType);
 
                 if (tmpF1Email != null) {
                     if (tmpPCOEmail == null) {
@@ -606,17 +608,17 @@ namespace F1toPCO.Controllers {
 
             //Emails
             F1toPCO.Model.F1.communications emailComms = new F1toPCO.Model.F1.communications();
-            emailComms.items = f1Person.communications.items.Where(y => y.communicationGeneralType == F1toPCO.Model.F1.communicationGeneralType.Email).ToList();
+            emailComms.items = f1Person.communications.FindByGeneralCommunicationType(F1toPCO.Model.F1.communicationGeneralType.Email);
             UpdateEmailCommunications(emailComms, pcoPerson.contactData.emailAddresses);
 
             //Phone numbers
             F1toPCO.Model.F1.communications phoneComs = new F1toPCO.Model.F1.communications();
-            phoneComs.items = f1Person.communications.items.Where(y => y.communicationGeneralType == F1toPCO.Model.F1.communicationGeneralType.Telephone).ToList();
+            phoneComs.items = f1Person.communications.FindByGeneralCommunicationType(F1toPCO.Model.F1.communicationGeneralType.Telephone);
             UpdatePhoneCommunications(phoneComs, pcoPerson.contactData.phoneNumbers);
 
             //Address
-            F1toPCO.Model.F1.address primaryAddress = f1Person.addresses.items.Where(x => x.addressType.name == "Primary").FirstOrDefault();
-            F1toPCO.Model.PCO.address pcoAddress = pcoPerson.contactData.addresses.address.Where(x => x.location == "Home").FirstOrDefault();
+            F1toPCO.Model.F1.address primaryAddress = f1Person.addresses.FindByType("Primary");
+            F1toPCO.Model.PCO.address pcoAddress = pcoPerson.contactData.addresses.FindByLocation("Home");
             if (primaryAddress != null) {
                 if (pcoAddress == null) {
                     pcoAddress = new F1toPCO.Model.PCO.address();
@@ -770,13 +772,7 @@ namespace F1toPCO.Controllers {
 
                         // Deserialize the response into a Person object.
                         Model.F1.attributeGroups attributes = xmlSerializer.Deserialize(streamReader) as Model.F1.attributeGroups;
-
-                        var id = (from a in attributes.attributeGroup
-                                  from y in a.attribute
-                                  where y.name == name
-                                  select y.id).FirstOrDefault();
-
-                        attributeId = Convert.ToInt32(id);
+                        attributeId = attributes.FindAttributeIDByName(name);
                     }
                 }
                 else {

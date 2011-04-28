@@ -9,7 +9,8 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-
+using System.Linq;
+using System;
 namespace F1toPCO.Model.F1 {
 
     [System.SerializableAttribute()]
@@ -17,6 +18,14 @@ namespace F1toPCO.Model.F1 {
     public class attributeGroups {
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "attributeGroup")]
         public List<attributeGroup> attributeGroup { get; set; }
+
+        public int FindAttributeIDByName(string name) {
+            var id = (from a in this.attributeGroup
+                      from y in a.attribute
+                      where y.name == name
+                      select y.id).FirstOrDefault();
+            return Convert.ToInt32(id);
+        }
     }
 
     /// <remarks/>

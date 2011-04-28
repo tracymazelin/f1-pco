@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="_F1Person.ascx.cs" Inherits="System.Web.Mvc.ViewUserControl<F1toPCO.Model.F1.person>" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewUserControl<F1toPCO.Model.F1.person>" %>
 <h2>
     <%= Model.firstName%>&nbsp;<%=Model.lastName%>
 </h2>

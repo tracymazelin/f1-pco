@@ -24,10 +24,9 @@ namespace F1toPCO.Model.PCO {
         }
 
         public person FindByEmailAddress(string emailAddress) {
-            return this.person.Where(x =>
+            return this.person.FirstOrDefault(x =>
                                      x.contactData.emailAddresses.emailAddress == x.contactData.emailAddresses.emailAddress.
-                                     Where(y => y.address == emailAddress))
-                                     .FirstOrDefault();
+                                     Where(y => y.address == emailAddress));     
         }
     }
 
@@ -621,6 +620,10 @@ namespace F1toPCO.Model.PCO {
             set {
                 SetField(ref typeField, value, "type");
             }
+        }
+
+        public emailAddress FindByLocation(string location) {
+            return this.emailAddress.FirstOrDefault(x => x.location == location);
         }
     }
 

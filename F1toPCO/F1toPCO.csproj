@@ -36,9 +36,6 @@
     <Reference Include="Accessibility">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Elmah">
-      <HintPath>Refs\Elmah.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -92,16 +89,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\PrivateConsts.cs" />
+    <Compile Include="Views\Shared\_Instructions.ascx.cs">
+      <DependentUpon>_Instructions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Views\Shared\_Instructions.ascx.designer.cs">
+      <DependentUpon>_Instructions.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\ajax-loader.gif" />
     <Content Include="Global.asax" />
     <Content Include="Views\Home\ChurchCode.aspx" />
     <Content Include="Views\Home\MultipleMatches.aspx" />
+    <Content Include="Views\Home\NoAttribute.aspx" />
     <Content Include="Views\Home\NonMatches.aspx" />
     <Content Include="Views\Home\Ready.aspx" />
     <Content Include="Views\Home\Success.aspx" />
     <Content Include="Views\Shared\_F1Person.ascx" />
+    <Content Include="Views\Shared\_Instructions.ascx" />
     <Content Include="Views\Shared\_PCOPerson.ascx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
