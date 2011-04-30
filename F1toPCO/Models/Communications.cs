@@ -51,18 +51,15 @@ namespace F1toPCO.Model.F1 {
 
         private string communicationCommentField;
 
-        private System.Nullable<System.DateTime> createdDateField;
+        private string createdDateField;
 
-        private System.Nullable<System.DateTime> lastUpdatedDateField;
+        private string lastUpdatedDateField;
 
         private string uriField;
 
         private string idField;
 
         public communication() {
-            this.createdDateField = new System.DateTime(0);
-            this.lastUpdatedDateField = new System.DateTime(0);
-
         }
 
         /// <remarks/>
@@ -147,7 +144,7 @@ namespace F1toPCO.Model.F1 {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-        public System.Nullable<System.DateTime> createdDate {
+        public string createdDate {
             get {
                 return this.createdDateField;
             }
@@ -158,7 +155,7 @@ namespace F1toPCO.Model.F1 {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-        public System.Nullable<System.DateTime> lastUpdatedDate {
+        public string lastUpdatedDate {
             get {
                 return this.lastUpdatedDateField;
             }

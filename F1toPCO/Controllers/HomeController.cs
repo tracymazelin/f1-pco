@@ -156,6 +156,23 @@ namespace F1toPCO.Controllers {
                 }
             }
         }
+
+        public List<Model.F1.person> PersonErrors {
+            get {
+                if (Session["PersonErrors"] == null) {
+                    Session["PersonErrors"] = new List<Model.F1.person>();
+                }
+                return (List<Model.F1.person>)Session["PersonErrors"];
+            }
+            set {
+                if (Session["PersonErrors"] != null) {
+                    Session["PersonErrors"] = value;
+                }
+                else {
+                    Session.Add("PersonErrors", value);
+                }
+            }
+        }
         #endregion
 
         #region Actions
@@ -241,8 +258,13 @@ namespace F1toPCO.Controllers {
 
                         person = this.PCOGetPersonByID(Convert.ToInt32(peopleAttribute.comment));
                         if (person != null) {
-                            this.UpdatePerson(p, ref person);
-                            this.PCOUpdatePerson(this.SerializeEntity(person), peopleAttribute.comment);
+                            try {
+                                this.UpdatePerson(p, ref person);
+                                this.PCOUpdatePerson(this.SerializeEntity(person), peopleAttribute.comment);
+                            }
+                            catch {
+                                this.PersonErrors.Add(p);
+                            }
                         }
                         else {
                             this.NoMatches.Add(new Model.MatchHelperData { F1Person = p, PCOPeople = null });
@@ -262,10 +284,19 @@ namespace F1toPCO.Controllers {
                             /// have to look them up my name next time.
 
                             Model.PCO.person matchPerson = people.person.FirstOrDefault();
-
-                            this.UpdatePerson(p, ref matchPerson);
-                            if (matchPerson.IsDirty) {
-                                this.PCOUpdatePerson(this.SerializeEntity(matchPerson), matchPerson.id.Value);
+                            try {
+                                try {
+                                    this.UpdatePerson(p, ref matchPerson);
+                                    if (matchPerson.IsDirty) {
+                                        this.PCOUpdatePerson(this.SerializeEntity(matchPerson), matchPerson.id.Value);
+                                    }
+                                }
+                                catch {
+                                    this.PersonErrors.Add(p);
+                                }
+                            }
+                            catch {
+                                this.PersonErrors.Add(p);
                             }
 
                             peopleAttribute.comment = matchPerson.id.Value;
@@ -289,9 +320,13 @@ namespace F1toPCO.Controllers {
                                 filteredPerson = people.FindByEmailAddress(email.communicationValue);
 
                                 if (filteredPerson != null) {
-                                    this.UpdatePerson(p, ref filteredPerson);
-                                    this.PCOUpdatePerson(this.SerializeEntity(filteredPerson), filteredPerson.id.Value);
-
+                                    try {
+                                        this.UpdatePerson(p, ref filteredPerson);
+                                        this.PCOUpdatePerson(this.SerializeEntity(filteredPerson), filteredPerson.id.Value);
+                                    }
+                                    catch {
+                                        this.PersonErrors.Add(p);
+                                    }
                                 }
                             }
 
@@ -309,7 +344,7 @@ namespace F1toPCO.Controllers {
                 if (this.Matches.Count > 0) {
                     return RedirectToAction("MultipleMatches");
                 }
-                return View("Success");
+                return RedirectToAction("Success");
             }
             else {
                 return View("NoAttribute");
@@ -336,10 +371,16 @@ namespace F1toPCO.Controllers {
                         F1toPCO.Model.PCO.person pcop = new F1toPCO.Model.PCO.person();
                         this.UpdatePerson(p, ref pcop);
 
-                        Model.PCO.person createdPerson = this.PCOCreatePerson(this.SerializeEntity(pcop));
-                        if (createdPerson != null) {
-                            peopleAttribute.comment = createdPerson.id.Value;
-                            this.F1UpdatePeopleAttribute(peopleAttribute);
+                        try {
+                            Model.PCO.person createdPerson = this.PCOCreatePerson(this.SerializeEntity(pcop));
+                            if (createdPerson != null) {
+                                peopleAttribute.comment = createdPerson.id.Value;
+                                this.F1UpdatePeopleAttribute(peopleAttribute);
+                            }
+                        }
+                        catch {
+                            this.PersonErrors.Add(p);
+
                         }
                     }
                     else {
@@ -353,7 +394,7 @@ namespace F1toPCO.Controllers {
                 return RedirectToAction("MultipleMatches");
             }
 
-            return View("Success");
+            return RedirectToAction("Success");
         }
 
         public ActionResult MultipleMatches() {
@@ -364,6 +405,7 @@ namespace F1toPCO.Controllers {
 
             foreach (string f1ID in Request.Form) {
 
+                Model.PCO.person createdPerson = null;
                 Model.F1.person p = this.Matches.FindF1PersonByID(f1ID);
 
                 if (!this.AttributeID.HasValue) {
@@ -382,20 +424,30 @@ namespace F1toPCO.Controllers {
                         Model.PCO.person newPCO = new Model.PCO.person();
                         this.UpdatePerson(p, ref newPCO);
 
-                        Model.PCO.person createdPerson = this.PCOCreatePerson(this.SerializeEntity(newPCO));
+                        try {
+                            createdPerson = this.PCOCreatePerson(this.SerializeEntity(newPCO));
+                        }
+                        catch {
+                            this.PersonErrors.Add(p);
+                        }
 
                         if (createdPerson != null) {
                             peopleAttribute.comment = createdPerson.id.Value;
                             this.F1UpdatePeopleAttribute(peopleAttribute);
                         }
+
                         break;
 
                     default:
                         var pcoPerson = this.Matches.FindPCOPersonByID(Request.Form[f1ID].ToString());
                         this.UpdatePerson(p, ref pcoPerson);
 
-                        this.PCOUpdatePerson(this.SerializeEntity(pcoPerson), Request.Form[f1ID].ToString());
-
+                        try {
+                            this.PCOUpdatePerson(this.SerializeEntity(pcoPerson), Request.Form[f1ID].ToString());
+                        }
+                        catch {
+                            this.PersonErrors.Add(p);
+                        }
                         peopleAttribute.comment = pcoPerson.id.Value;
                         this.F1UpdatePeopleAttribute(peopleAttribute);
 
@@ -404,7 +456,11 @@ namespace F1toPCO.Controllers {
             }
             this.Matches.Clear();
 
-            return View("Success");
+            return RedirectToAction("Success");
+        }
+
+        public ActionResult Success() {
+            return View(this.PersonErrors);
         }
 
         public ActionResult Trouble() {

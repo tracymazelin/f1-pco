@@ -31,13 +31,13 @@ namespace F1toPCO.Model.F1 {
 
         private string householdFirstNameField;
 
-        private System.Nullable<System.DateTime> lastSecurityAuthorizationField;
+        private string lastSecurityAuthorizationField;
 
-        private System.Nullable<System.DateTime> lastActivityDateField;
+        private string lastActivityDateField;
 
-        private System.Nullable<System.DateTime> createdDateField;
+        private string createdDateField;
 
-        private System.Nullable<System.DateTime> lastUpdatedDateField;
+        private string lastUpdatedDateField;
 
         private string uriField;
 
@@ -48,10 +48,6 @@ namespace F1toPCO.Model.F1 {
         private string hCodeField;
 
         public household() {
-            this.lastSecurityAuthorizationField = new System.DateTime(0);
-            this.lastActivityDateField = new System.DateTime(0);
-            this.createdDateField = new System.DateTime(0);
-            this.lastUpdatedDateField = new System.DateTime(0);
         }
 
         /// <remarks/>
@@ -88,7 +84,7 @@ namespace F1toPCO.Model.F1 {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-        public System.Nullable<System.DateTime> lastSecurityAuthorization {
+        public string lastSecurityAuthorization {
             get {
                 return this.lastSecurityAuthorizationField;
             }
@@ -99,7 +95,7 @@ namespace F1toPCO.Model.F1 {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-        public System.Nullable<System.DateTime> lastActivityDate {
+        public string lastActivityDate {
             get {
                 return this.lastActivityDateField;
             }
@@ -110,7 +106,7 @@ namespace F1toPCO.Model.F1 {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-        public System.Nullable<System.DateTime> createdDate {
+        public string createdDate {
             get {
                 return this.createdDateField;
             }
@@ -121,7 +117,7 @@ namespace F1toPCO.Model.F1 {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
-        public System.Nullable<System.DateTime> lastUpdatedDate {
+        public string lastUpdatedDate {
             get {
                 return this.lastUpdatedDateField;
             }
