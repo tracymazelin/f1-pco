@@ -767,7 +767,7 @@ namespace F1toPCO.Controllers {
 
             sqlcom.Connection = sqlConn;
             sqlcom.CommandType = CommandType.Text;
-            sqlcom.CommandText ="Select LastRun FROM LastRun WHERE ChurchCode = " + this.F1ChurchCode;
+            sqlcom.CommandText ="Select LastRun FROM LastRun WHERE ChurchCode = '" + this.F1ChurchCode + "'";
             sqlConn.Open();
             var lastRun = sqlcom.ExecuteScalar();
             sqlConn.Close();
