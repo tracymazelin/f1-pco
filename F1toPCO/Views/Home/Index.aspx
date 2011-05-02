@@ -6,7 +6,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div id="frontimage">
-        <img src="/F1toPCO/Content/images/F1PCO.png">
+        <img src="Content/images/F1PCO.png">
         <div>
             <h1>
                 Two great things that go great together!
