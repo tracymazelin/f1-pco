@@ -5,12 +5,29 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>
-        Welcome to F1 to PCO.
-    </h1>
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus posuere urna in bibendum. Duis bibendum pretium dignissim. Vestibulum id ligula augue. Phasellus aliquam sapien et velit faucibus non adipiscing orci aliquet. Quisque sit amet nisi nulla, sed tempus ipsum. Quisque non elit eget erat porttitor consequat sed at libero. Sed adipiscing, leo sit amet volutpat ornare, odio quam viverra sem, feugiat consequat elit risus sit amet elit. Integer et sapien ut dui ultricies consequat in non libero. Aliquam dictum enim id urna tincidunt fringilla. Sed sed egestas sem. Proin nisl augue, cursus ut dictum at, faucibus ac sem. Sed pellentesque felis non orci vestibulum gravida. Proin tortor eros, commodo nec varius nec, laoreet sagittis dui.
-    </p>
-    <a href="ChurchCode" class="myButton">Get Started</a>
-   
+    <div id="frontimage">
+        <img src="/F1toPCO/Content/images/F1PCO.png">
+        <div>
+            <h1>
+                Two great things that go great together!
+            </h1>
+            <p>
+                Finally, you can now sync your Fellowship One data with Planning Center Online keeping you volunteers contact data up to date with the click of a button.
+            </p>
+        </div>
+        <div>
+            <div style="float:right;width:25%">
+                <p>
+                    If you've already setup your church to be able to sync then you are ready to go!
+                </p>
+                <a href="ChurchCode" class="myButton">Get Started</a>
+            </div>
+            <div style="float:left">
+                <p>
+                    instructions
+                </p>
+            <div>
+        </div>
+        <div class="clear"></div>
+    </div>
 </asp:Content>

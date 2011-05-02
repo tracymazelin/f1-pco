@@ -21,11 +21,8 @@
             </div>
             <div class="clear"></div>
             <div id="content" class="container_12">
-                <div id="left" class="grid_9">
+                <div id="left" class="grid_12">
                    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
-                </div>
-                <div id="right" class="grid_3 aside">
-                    &nbsp;
                 </div>
             </div>
             <div class="clear"></div>

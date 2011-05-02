@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\ajax-loader.gif" />
+    <Content Include="Content\images\F1PCO.png" />
     <Content Include="Global.asax" />
     <Content Include="Views\Home\ChurchCode.aspx" />
     <Content Include="Views\Home\MultipleMatches.aspx" />

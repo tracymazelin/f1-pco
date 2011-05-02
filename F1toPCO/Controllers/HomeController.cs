@@ -12,6 +12,9 @@ using F1toPCO.Util;
 using Hammock;
 using Hammock.Authentication.OAuth;
 using Hammock.Web;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace F1toPCO.Controllers {
 
@@ -231,6 +234,8 @@ namespace F1toPCO.Controllers {
         }
 
         public ActionResult Sync() {
+            DateTime? lastRun = null;
+            Model.F1.people f1People = null;
             Model.PCO.person person = null;
 
             //Get the ID of the attribute with the name SyncMe.  This is the attribute
@@ -238,12 +243,17 @@ namespace F1toPCO.Controllers {
             this.AttributeID = this.F1GetAttributeID("SyncMe");
 
             if (this.AttributeID != 0) {
-                //TODO:
-                //IF THE LAST RUN DATE IS NULL WE JUST NEED TO GET PEOPLE BY ATTRIBUTE INSTEAD OF LAST UPDATED!!!!!
+                lastRun = this.GetLastRun();
 
-                //Get the people that have been updated since the last time we ran
-                Model.F1.people f1People = this.F1GetPeopleByLastUpdatedDate("1/1/2011");
-
+                if (lastRun != null) {
+                    //Get the people that have been updated since the last time we ran
+                    f1People = this.F1GetPeopleByLastUpdatedDate("1/1/2011");
+                }
+                else {
+                    //Since we've never run just get all people with the attribute
+                    f1People = this.F1GetPeopleByAttribute(this.AttributeID.Value);
+                }
+               
                 //Filter out the people who don't have the SyncMe Attribute.
                 List<Model.F1.person> filteredPeople = f1People.FindByAttributeID(this.AttributeID.Value);
 
@@ -460,6 +470,7 @@ namespace F1toPCO.Controllers {
         }
 
         public ActionResult Success() {
+            this.SaveLastRun();
             return View(this.PersonErrors);
         }
 
@@ -733,6 +744,31 @@ namespace F1toPCO.Controllers {
             returnXml = returnXml.Substring(0, (returnXml.LastIndexOf(Convert.ToChar(62)) + 1));
 
             return returnXml;
+        }
+
+        private void SaveLastRun() {
+            SqlCommand sqlcom = new SqlCommand();
+            var constring = ConfigurationManager.ConnectionStrings["F1toPCO"];
+            SqlConnection sqlConn = new SqlConnection(constring.ToString());
+
+            sqlcom.Connection = sqlConn;
+            sqlcom.CommandType = CommandType.StoredProcedure;
+            sqlcom.CommandText = "UpdateLastRun";
+            sqlcom.Parameters.Add(new SqlParameter("ChurchCode", this.F1ChurchCode));
+            sqlcom.ExecuteNonQuery();
+        }
+
+        private DateTime? GetLastRun() {
+            SqlCommand sqlcom = new SqlCommand();
+            var constring = ConfigurationManager.ConnectionStrings["F1toPCO"];
+            SqlConnection sqlConn = new SqlConnection(constring.ToString());
+
+            sqlcom.Connection = sqlConn;
+            sqlcom.CommandType = CommandType.Text;
+            sqlcom.CommandText ="Select LastRun FROM LastRun WHERE ChurchCode = " + this.F1ChurchCode;
+            var lastRun = sqlcom.ExecuteScalar();
+
+            return lastRun as DateTime?;
         }
 
         #endregion
