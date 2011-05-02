@@ -754,8 +754,10 @@ namespace F1toPCO.Controllers {
             sqlcom.Connection = sqlConn;
             sqlcom.CommandType = CommandType.StoredProcedure;
             sqlcom.CommandText = "UpdateLastRun";
+            sqlConn.Open();
             sqlcom.Parameters.Add(new SqlParameter("ChurchCode", this.F1ChurchCode));
             sqlcom.ExecuteNonQuery();
+            sqlConn.Close();
         }
 
         private DateTime? GetLastRun() {
@@ -766,8 +768,9 @@ namespace F1toPCO.Controllers {
             sqlcom.Connection = sqlConn;
             sqlcom.CommandType = CommandType.Text;
             sqlcom.CommandText ="Select LastRun FROM LastRun WHERE ChurchCode = " + this.F1ChurchCode;
+            sqlConn.Open();
             var lastRun = sqlcom.ExecuteScalar();
-
+            sqlConn.Close();
             return lastRun as DateTime?;
         }
 
