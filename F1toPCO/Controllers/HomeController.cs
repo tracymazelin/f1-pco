@@ -181,6 +181,7 @@ namespace F1toPCO.Controllers {
         #region Actions
 
         public ActionResult Index() {
+            Session.Remove("PersonErrors");
             return View();
         }
 
@@ -471,6 +472,7 @@ namespace F1toPCO.Controllers {
 
         public ActionResult Success() {
             this.SaveLastRun();
+            this.Reset();
             return View(this.PersonErrors);
         }
 
@@ -746,6 +748,9 @@ namespace F1toPCO.Controllers {
             return returnXml;
         }
 
+        /// <summary>
+        /// Save the last time we ran
+        /// </summary>
         private void SaveLastRun() {
             SqlCommand sqlcom = new SqlCommand();
             var constring = ConfigurationManager.ConnectionStrings["F1toPCO"];
@@ -760,6 +765,10 @@ namespace F1toPCO.Controllers {
             sqlConn.Close();
         }
 
+        /// <summary>
+        /// Get the last time we ran.
+        /// </summary>
+        /// <returns></returns>
         private DateTime? GetLastRun() {
             SqlCommand sqlcom = new SqlCommand();
             var constring = ConfigurationManager.ConnectionStrings["F1toPCO"];
@@ -774,6 +783,14 @@ namespace F1toPCO.Controllers {
             return lastRun as DateTime?;
         }
 
+        /// <summary>
+        /// Removes all the stuff from session so we can start over
+        /// </summary>
+        private void Reset() {
+            Session.Remove("AttributeID");
+            Session.Remove("Matches");
+            Session.Remove("NoMatches");            
+        }
         #endregion
 
         #region REST
