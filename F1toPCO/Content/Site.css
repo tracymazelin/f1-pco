@@ -57,22 +57,31 @@ table
 
 h1 
 {
-    font-size: 1.2em;
+    font-size: 1.1em;
+    padding-top:10px;
+    padding-bottom: 10px;
 }
 
 h2 
 {
     font-size: 1.5em;
     padding-top: 10px;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 p 
-{
+{   
     padding-top: 10px;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
+li 
+{    padding: 5px;    list-style-type: decimal;
+}
+ul 
+{
+    padding-left: 40px;   
+}
 .section 
 {
     background: #f3f3f3;
@@ -96,9 +105,34 @@ td
     padding: 10px 0 0 0; 
 }
 
+hr 
+{
+    width: 85%; 
+}
+
+#getstarted 
+{
+    float:right;
+    width:25%;
+    border: solid 2px #D6D6C2;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    -khtml-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    padding: 10px;
+    margin: 10px;
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background-color:#ededed;
+}
+
 #frontimage 
 {
-    padding-top: 20px;   
+    padding-top: 20px;
 }
 
 .myButton {
@@ -130,7 +164,6 @@ td
 	position:relative;
 	top:1px;
 }
-
 
 
 /* Containers

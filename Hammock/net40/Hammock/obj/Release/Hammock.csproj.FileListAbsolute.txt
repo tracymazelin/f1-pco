@@ -1,5 +1,0 @@
-C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\bin\lib\net40\Hammock.dll
-C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\bin\lib\net40\Hammock.pdb
-C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\Hammock\net40\Hammock\obj\Release\ResolveAssemblyReference.cache
-C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\Hammock\net40\Hammock\obj\Release\Hammock.dll
-C:\Users\Kelly\Documents\Visual Studio 2010\Projects\F1toPCO\Hammock\net40\Hammock\obj\Release\Hammock.pdb
