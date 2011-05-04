@@ -105,6 +105,8 @@
     <Content Include="Content\images\F1PCO.png" />
     <Content Include="Content\images\instructions_1.png" />
     <Content Include="Content\images\instructions_2.png" />
+    <Content Include="Content\images\pcologo.gif" />
+    <Content Include="Content\images\test.png" />
     <Content Include="Global.asax" />
     <Content Include="Views\Home\ChurchCode.aspx" />
     <Content Include="Views\Home\MultipleMatches.aspx" />

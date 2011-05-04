@@ -7,7 +7,7 @@
         <meta name="google-site-verification" content="NraCKotZMdgJy1NrOegvdZeq_tAUbFA3a-pm7SX3p3M" />
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
         <link href="../../Content/Site.css" rel="stylesheet" type="text/css" />
-        <script src="/F1toPCO/Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+        <script src="../../Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
         <script type="text/javascript"> 
  
 		  var _gaq = _gaq || [];
