@@ -248,7 +248,7 @@ namespace F1toPCO.Controllers {
 
                 if (lastRun != null) {
                     //Get the people that have been updated since the last time we ran
-                    f1People = this.F1GetPeopleByLastUpdatedDate("1/1/2011");
+                    f1People = this.F1GetPeopleByLastUpdatedDate(lastRun.Value.ToString());
                 }
                 else {
                     //Since we've never run just get all people with the attribute
