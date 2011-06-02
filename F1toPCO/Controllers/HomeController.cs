@@ -287,6 +287,38 @@ namespace F1toPCO.Controllers {
 
                         Model.PCO.people people = null;
                         people = this.PCOGetPersonByName(p.lastName + ", " + (string.IsNullOrEmpty(p.goesByName) ? p.firstName.Substring(0, 1) : p.goesByName.Substring(0, 1)));
+                        
+                        var email = p.communications.FindByCommunicationTypeName("Email");
+
+                        if (email != null) {
+                            people = people.FindByEmailAddress("Email");
+                        }
+
+                        switch (people.person.Count) {
+                            case 0:
+
+                                break;
+                            case 1:
+
+                                break;
+
+                            default:
+
+                                break;
+                        }
+
+                        if (people.person.Count > 0) {
+                            //search by emial
+
+                            //if 1 do the update
+
+                            //if multiple add to collection
+
+
+                        }
+
+
+
 
                         if (people.person.Count == 1) {
                             /// ONE MATCH FOUND ///
@@ -480,6 +512,10 @@ namespace F1toPCO.Controllers {
             return View("Error");
         }
 
+        public ActionResult Terms() {
+            return View();
+        }
+
         #endregion
 
         #region Private Methods
@@ -540,8 +576,15 @@ namespace F1toPCO.Controllers {
             RestResponse response = client.Request(request);
 
             var collection = HttpUtility.ParseQueryString(response.Content);
+
             this.F1AccessToken.Value = collection["oauth_token"];
             this.F1AccessToken.Secret = collection["oauth_token_secret"];
+
+            //Save the ind id of the person that logged in.
+            if (response.ResponseUri != null) {
+                string responseUri = response.ResponseUri.ToString();
+                this.SaveTerms(responseUri.Substring(responseUri.LastIndexOf("/") + 1));
+            }
         }
 
         private void GetPCORequestToken() {
@@ -758,12 +801,27 @@ namespace F1toPCO.Controllers {
 
             sqlcom.Connection = sqlConn;
             sqlcom.CommandType = CommandType.StoredProcedure;
-            sqlcom.CommandText = "UpdateLastRun";
+            sqlcom.CommandText = "UpdateLastRun";            
+            sqlcom.Parameters.Add(new SqlParameter("@ChurchCode", this.F1ChurchCode));
             sqlConn.Open();
-            sqlcom.Parameters.Add(new SqlParameter("ChurchCode", this.F1ChurchCode));
             sqlcom.ExecuteNonQuery();
             sqlConn.Close();
         }
+
+        private void SaveTerms(string individual) {
+            SqlCommand sqlcom = new SqlCommand();
+            var constring = ConfigurationManager.ConnectionStrings["F1toPCO"];
+            SqlConnection sqlConn = new SqlConnection(constring.ToString());
+
+            sqlcom.Connection = sqlConn;
+            sqlcom.CommandType = CommandType.StoredProcedure;
+            sqlcom.CommandText = "UpdateTerms";            
+            sqlcom.Parameters.Add(new SqlParameter("@ChurchCode", this.F1ChurchCode));
+            sqlcom.Parameters.Add(new SqlParameter("@Individual", individual));
+            sqlConn.Open();
+            sqlcom.ExecuteNonQuery();
+            sqlConn.Close();
+        }        
 
         /// <summary>
         /// Get the last time we ran.
@@ -776,12 +834,12 @@ namespace F1toPCO.Controllers {
 
             sqlcom.Connection = sqlConn;
             sqlcom.CommandType = CommandType.Text;
-            sqlcom.CommandText ="Select LastRun FROM LastRun WHERE ChurchCode = '" + this.F1ChurchCode + "'";
+            sqlcom.CommandText ="Select LastRun FROM ChurchData WHERE ChurchCode = '" + this.F1ChurchCode + "'";
             sqlConn.Open();
             var lastRun = sqlcom.ExecuteScalar();
             sqlConn.Close();
             return lastRun as DateTime?;
-        }
+        }        
 
         /// <summary>
         /// Removes all the stuff from session so we can start over

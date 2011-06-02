@@ -23,10 +23,10 @@ namespace F1toPCO.Model.PCO {
             return this.person.Find(x => x.id.Value == id.ToString());
         }
 
-        public person FindByEmailAddress(string emailAddress) {
-            return this.person.FirstOrDefault(x =>
+        public people FindByEmailAddress(string emailAddress) {
+            return this.person.Where(x =>
                                      x.contactData.emailAddresses.emailAddress == x.contactData.emailAddresses.emailAddress.
-                                     Where(y => y.address == emailAddress));     
+                                     Where(y => y.address == emailAddress)).ToList();     
         }
     }
 
