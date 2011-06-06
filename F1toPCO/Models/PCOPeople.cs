@@ -11,22 +11,26 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace F1toPCO.Model.PCO {
+namespace F1toPCO.Model.PCO
+{
 
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlRoot("people")]
-    public class people {
+    public class people
+    {
         [System.Xml.Serialization.XmlElementAttribute(ElementName = "person")]
         public List<person> person { get; set; }
 
-        public person FindByID(int id) {
+        public person FindByID(int id)
+        {
             return this.person.Find(x => x.id.Value == id.ToString());
         }
 
-        public people FindByEmailAddress(string emailAddress) {
+        public List<person> FindByEmailAddress(string emailAddress)
+        {
             return this.person.Where(x =>
-                                     x.contactData.emailAddresses.emailAddress == x.contactData.emailAddresses.emailAddress.
-                                     Where(y => y.address == emailAddress)).ToList();     
+                                    x.contactData.emailAddresses.emailAddress == x.contactData.emailAddresses.emailAddress.
+                                    Where(y => y.address == emailAddress)).ToList();
         }
     }
 
@@ -37,7 +41,8 @@ namespace F1toPCO.Model.PCO {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = true)]
-    public partial class id {
+    public partial class id
+    {
 
         private string typeField;
 
@@ -45,22 +50,28 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 this.typeField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
+        public string Value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
@@ -73,9 +84,11 @@ namespace F1toPCO.Model.PCO {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     [System.Xml.Serialization.XmlRoot("person")]
-    public partial class person : BaseModel {
+    public partial class person : BaseModel
+    {
 
-        public person() {
+        public person()
+        {
             this.createdById = new personCreatedById();
             this.createDate = new personCreateDate();
             this.updateDate = new personUpdateDate();
@@ -113,154 +126,195 @@ namespace F1toPCO.Model.PCO {
 
         private properties propertiesField;
 
-        public bool IsDirty {
-            get {
+        public bool IsDirty
+        {
+            get
+            {
                 return base.IsDirty && contactData.addresses.address.FindAll(a => a.IsDirty).Count > 0
                                     && contactData.emailAddresses.emailAddress.FindAll(b => b.IsDirty).Count > 0
                                     && contactData.phoneNumbers.phoneNumber.FindAll(c => c.IsDirty).Count > 0
-                                    && properties.property.FindAll(d=>d.IsDirty).Count > 0;
+                                    && properties.property.FindAll(d => d.IsDirty).Count > 0;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("first-name", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string firstname {
-            get {
+        public string firstname
+        {
+            get
+            {
                 return this.firstnameField;
             }
-            set {
+            set
+            {
                 SetField(ref firstnameField, value, "firstname");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("last-name", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string lastname {
-            get {
+        public string lastname
+        {
+            get
+            {
                 return this.lastnameField;
             }
-            set {
+            set
+            {
                 SetField(ref lastnameField, value, "lastname");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string name {
-            get {
+        public string name
+        {
+            get
+            {
                 return this.nameField;
             }
-            set {
+            set
+            {
                 SetField(ref nameField, value, "name");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string permissions {
-            get {
+        public string permissions
+        {
+            get
+            {
                 return this.permissionsField;
             }
-            set {
+            set
+            {
                 SetField(ref permissionsField, value, "permissions");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("photo-thumbnail-url", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string photothumbnailurl {
-            get {
+        public string photothumbnailurl
+        {
+            get
+            {
                 return this.photothumbnailurlField;
             }
-            set {
+            set
+            {
                 this.photothumbnailurlField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("photo-url", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string photourl {
-            get {
+        public string photourl
+        {
+            get
+            {
                 return this.photourlField;
             }
-            set {
+            set
+            {
                 this.photourlField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("created-at", IsNullable = true)]
-        public personCreateDate createDate {
-            get {
+        public personCreateDate createDate
+        {
+            get
+            {
                 return this.createDateField;
             }
-            set {
+            set
+            {
                 this.createDateField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("created-by-id", IsNullable = true)]
-        public personCreatedById createdById {
-            get {
+        public personCreatedById createdById
+        {
+            get
+            {
                 return this.createdByIdField;
             }
-            set {
+            set
+            {
                 this.createdByIdField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("id", IsNullable = true)]
-        public id id {
-            get {
+        public id id
+        {
+            get
+            {
                 return this.idField;
             }
-            set {
+            set
+            {
                 SetField(ref idField, value, "id");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("updated-at", IsNullable = true)]
-        public personUpdateDate updateDate {
-            get {
+        public personUpdateDate updateDate
+        {
+            get
+            {
                 return this.updateDateField;
             }
-            set {
+            set
+            {
                 this.updateDateField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("updated-by-id", IsNullable = true)]
-        public personUpdatedById updatedById {
-            get {
+        public personUpdatedById updatedById
+        {
+            get
+            {
                 return this.updatedByIdField;
             }
-            set {
+            set
+            {
                 SetField(ref updatedByIdField, value, "updatedbyid");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("contact-data")]
-        public contactData contactData {
-            get {
+        public contactData contactData
+        {
+            get
+            {
                 return this.contactDataField;
             }
-            set {
+            set
+            {
                 SetField(ref contactDataField, value, "contactdata");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("properties")]
-        public properties properties {
-            get {
+        public properties properties
+        {
+            get
+            {
                 return this.propertiesField;
             }
-            set {
+            set
+            {
                 SetField(ref propertiesField, value, "properties");
             }
         }
@@ -272,7 +326,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class personCreateDate {
+    public partial class personCreateDate
+    {
 
         private string typeField;
 
@@ -280,22 +335,28 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 this.typeField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
+        public string Value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
@@ -307,7 +368,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class personCreatedById {
+    public partial class personCreatedById
+    {
 
         private string typeField;
 
@@ -315,22 +377,28 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 this.typeField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
+        public string Value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
@@ -342,7 +410,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class personUpdateDate {
+    public partial class personUpdateDate
+    {
 
         private string typeField;
 
@@ -350,22 +419,28 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 this.typeField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
+        public string Value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
@@ -377,7 +452,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class personUpdatedById {
+    public partial class personUpdatedById
+    {
 
         private string typeField;
 
@@ -385,22 +461,28 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 this.typeField = value;
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
+        public string Value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
@@ -412,7 +494,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class contactData : BaseModel {
+    public partial class contactData : BaseModel
+    {
 
         private addresses addressesField;
 
@@ -422,33 +505,42 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("addresses", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public addresses addresses {
-            get {
+        public addresses addresses
+        {
+            get
+            {
                 return this.addressesField;
             }
-            set {
+            set
+            {
                 SetField(ref addressesField, value, "addresses");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("email-addresses", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public emailAddresses emailAddresses {
-            get {
+        public emailAddresses emailAddresses
+        {
+            get
+            {
                 return this.emailAddressesField;
             }
-            set {
+            set
+            {
                 SetField(ref emailAddressesField, value, "emailaddresses");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("phone-numbers", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public phoneNumbers phoneNumbers {
-            get {
+        public phoneNumbers phoneNumbers
+        {
+            get
+            {
                 return this.phoneNumbersField;
             }
-            set {
+            set
+            {
                 SetField(ref phoneNumbersField, value, "phonenumbers");
             }
         }
@@ -460,9 +552,11 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class addresses : BaseModel {
+    public partial class addresses : BaseModel
+    {
 
-        public addresses() {
+        public addresses()
+        {
             this.address = new List<address>();
         }
 
@@ -470,28 +564,35 @@ namespace F1toPCO.Model.PCO {
 
         private string typeField = "array";
 
-        public address FindByLocation(string location) {
+        public address FindByLocation(string location)
+        {
             return this.address.FirstOrDefault(x => x.location == location);
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("address", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public List<address> address {
-            get {
+        public List<address> address
+        {
+            get
+            {
                 return this.addressField;
             }
-            set {
+            set
+            {
                 SetField(ref addressField, value, "address");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("type")]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 SetField(ref typeField, value, "type");
             }
         }
@@ -503,7 +604,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class address : BaseModel {
+    public partial class address : BaseModel
+    {
 
         private string cityField;
 
@@ -519,66 +621,84 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string city {
-            get {
+        public string city
+        {
+            get
+            {
                 return this.cityField;
             }
-            set {
+            set
+            {
                 SetField(ref cityField, value, "city");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string state {
-            get {
+        public string state
+        {
+            get
+            {
                 return this.stateField;
             }
-            set {
+            set
+            {
                 SetField(ref stateField, value, "state");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string street {
-            get {
+        public string street
+        {
+            get
+            {
                 return this.streetField;
             }
-            set {
+            set
+            {
                 SetField(ref streetField, value, "street");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string zip {
-            get {
+        public string zip
+        {
+            get
+            {
                 return this.zipField;
             }
-            set {
+            set
+            {
                 SetField(ref zipField, value, "zip");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string location {
-            get {
+        public string location
+        {
+            get
+            {
                 return this.locationField;
             }
-            set {
+            set
+            {
                 SetField(ref locationField, value, "location");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("id", IsNullable = true)]
-        public id[] id {
-            get {
+        public id[] id
+        {
+            get
+            {
                 return this.idField;
             }
-            set {
+            set
+            {
                 SetField(ref idField, value, "id");
             }
         }
@@ -590,9 +710,11 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class emailAddresses : BaseModel {
+    public partial class emailAddresses : BaseModel
+    {
 
-        public emailAddresses() {
+        public emailAddresses()
+        {
             this.emailAddress = new List<emailAddress>();
         }
 
@@ -602,27 +724,34 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("email-address", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public List<emailAddress> emailAddress {
-            get {
+        public List<emailAddress> emailAddress
+        {
+            get
+            {
                 return this.emailAddressField;
             }
-            set {
+            set
+            {
                 SetField(ref emailAddressField, value, "emailaddress");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("type")]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 SetField(ref typeField, value, "type");
             }
         }
 
-        public emailAddress FindByLocation(string location) {
+        public emailAddress FindByLocation(string location)
+        {
             return this.emailAddress.FirstOrDefault(x => x.location == location);
         }
     }
@@ -633,7 +762,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class emailAddress : BaseModel {
+    public partial class emailAddress : BaseModel
+    {
 
         private string addressField;
 
@@ -643,33 +773,42 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string address {
-            get {
+        public string address
+        {
+            get
+            {
                 return this.addressField;
             }
-            set {
+            set
+            {
                 SetField(ref addressField, value, "address");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string location {
-            get {
+        public string location
+        {
+            get
+            {
                 return this.locationField;
             }
-            set {
+            set
+            {
                 SetField(ref locationField, value, "location");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("id", IsNullable = true)]
-        public id[] id {
-            get {
+        public id[] id
+        {
+            get
+            {
                 return this.idField;
             }
-            set {
+            set
+            {
                 SetField(ref idField, value, "id");
             }
         }
@@ -681,9 +820,11 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class phoneNumbers : BaseModel {
+    public partial class phoneNumbers : BaseModel
+    {
 
-        public phoneNumbers() {
+        public phoneNumbers()
+        {
             this.phoneNumber = new List<phoneNumber>();
         }
 
@@ -691,28 +832,35 @@ namespace F1toPCO.Model.PCO {
 
         private string typeField = "array";
 
-        public phoneNumber FindByLocation(string location) {
+        public phoneNumber FindByLocation(string location)
+        {
             return this.phoneNumber.FirstOrDefault(x => x.location == location);
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("phone-number", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public List<phoneNumber> phoneNumber {
-            get {
+        public List<phoneNumber> phoneNumber
+        {
+            get
+            {
                 return this.phoneNumberField;
             }
-            set {
+            set
+            {
                 SetField(ref phoneNumberField, value, "phonenumber");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("type")]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 SetField(ref typeField, value, "type");
             }
         }
@@ -724,7 +872,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class phoneNumber : BaseModel {
+    public partial class phoneNumber : BaseModel
+    {
 
         private string numberField;
 
@@ -734,33 +883,42 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string number {
-            get {
+        public string number
+        {
+            get
+            {
                 return this.numberField;
             }
-            set {
+            set
+            {
                 SetField(ref numberField, value, "number");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string location {
-            get {
+        public string location
+        {
+            get
+            {
                 return this.locationField;
             }
-            set {
+            set
+            {
                 SetField(ref locationField, value, "location");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("id", IsNullable = true)]
-        public id[] id {
-            get {
+        public id[] id
+        {
+            get
+            {
                 return this.idField;
             }
-            set {
+            set
+            {
                 SetField(ref idField, value, "id");
             }
         }
@@ -772,7 +930,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class properties : BaseModel {
+    public partial class properties : BaseModel
+    {
 
         private List<property> propertyField;
 
@@ -780,22 +939,28 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("property", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public List<property> property {
-            get {
+        public List<property> property
+        {
+            get
+            {
                 return this.propertyField;
             }
-            set {
+            set
+            {
                 SetField(ref propertyField, value, "property");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
+        public string type
+        {
+            get
+            {
                 return this.typeField;
             }
-            set {
+            set
+            {
                 SetField(ref typeField, value, "type");
             }
         }
@@ -807,7 +972,8 @@ namespace F1toPCO.Model.PCO {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class property : BaseModel {
+    public partial class property : BaseModel
+    {
 
         private string fieldField;
 
@@ -819,44 +985,56 @@ namespace F1toPCO.Model.PCO {
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string field {
-            get {
+        public string field
+        {
+            get
+            {
                 return this.fieldField;
             }
-            set {
+            set
+            {
                 SetField(ref fieldField, value, "field");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("field-allows-multiple-selections", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string fieldallowsmultipleselections {
-            get {
+        public string fieldallowsmultipleselections
+        {
+            get
+            {
                 return this.fieldallowsmultipleselectionsField;
             }
-            set {
+            set
+            {
                 SetField(ref fieldallowsmultipleselectionsField, value, "fieldallowsmultipleselections");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string option {
-            get {
+        public string option
+        {
+            get
+            {
                 return this.optionField;
             }
-            set {
+            set
+            {
                 SetField(ref optionField, value, "option");
             }
         }
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("id", IsNullable = true)]
-        public id[] id {
-            get {
+        public id[] id
+        {
+            get
+            {
                 return this.idField;
             }
-            set {
+            set
+            {
                 SetField(ref idField, value, "id");
             }
         }
@@ -869,18 +1047,22 @@ namespace F1toPCO.Model.PCO {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public partial class NewDataSet {
+    public partial class NewDataSet
+    {
 
         private object[] itemsField;
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("id", typeof(id), IsNullable = true)]
         [System.Xml.Serialization.XmlElementAttribute("person", typeof(person))]
-        public object[] Items {
-            get {
+        public object[] Items
+        {
+            get
+            {
                 return this.itemsField;
             }
-            set {
+            set
+            {
                 this.itemsField = value;
             }
         }

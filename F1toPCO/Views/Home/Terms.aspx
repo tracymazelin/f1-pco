@@ -58,5 +58,8 @@
             Questions about the Terms of Service should be sent to support@funkypantssoftware.com
         </p>
     </div>
-
+    <p>  
+        <a href="Authenticate" id="button" class="myButton">I agree</a>
+        <a href="Index" id="cancel" class="myButton">Decline</a>
+    </p>
 </asp:Content>
