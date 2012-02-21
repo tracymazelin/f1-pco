@@ -1,0 +1,20 @@
+Stagging
+f1ConsumerKey = "257";
+        
+f1ConsumerSecret = "d514c4c5-8374-49f0-8d25-35e379adb37f";
+
+
+
+Prod
+        
+f1ConsumerKey = "34";
+
+f1ConsumerSecret = "85eb8861-7b57-44a3-9d53-d023003e6273";
+
+
+
+pcoConsumerKey  ="HfK94IoIKmm40sHeVykg";
+
+pcoConsumerSecret = "wBWSl0szv2PhuGSxBUf7xyUjnnW389Bzou6EgPFA";
+
+Server=localhost\sqlexpress;Database=F1toPCO;User ID=sa;Password=udliskek;
