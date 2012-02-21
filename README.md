@@ -1,7 +1,7 @@
 Fellowship One to Planning Center Online Sync.
 =
 
-Demo at (http://f1topco.apphb.com)
+Demo at http://f1topco.apphb.com
 
 This ASP.NET MVC web app uses the [Fellowship One API](http://developer.fellowshipone.com) and [Planning Center Online API](http://get.planningcenteronline.com/api/general-details/) to sync demographic data from F1 to PCO.  Currently this is a one way sync only.
 
