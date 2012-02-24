@@ -1458,6 +1458,13 @@
             to use a specific connection string for connecting to the database.
             </summary>
         </member>
+        <member name="M:Elmah.OracleErrorLog.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Elmah.OracleErrorLog"/> class
+            to use a specific connection string for connecting to the database and
+            a specific schema owner.
+            </summary>
+        </member>
         <member name="M:Elmah.OracleErrorLog.Log(Elmah.Error)">
             <summary>
             Logs an error to the database.
@@ -1478,6 +1485,11 @@
             <summary>
             Returns the specified error from the database, or null 
             if it does not exist.
+            </summary>
+        </member>
+        <member name="P:Elmah.OracleErrorLog.SchemaOwner">
+            <summary>
+            Gets the name of the schema owner where the errors are being stored.
             </summary>
         </member>
         <member name="P:Elmah.OracleErrorLog.Name">
@@ -1659,56 +1671,6 @@
             section of the configuration file.
             </summary>
         </member>
-        <member name="T:Elmah.SqlCompactErrorLog">
-            <summary>
-            An Elmah <see cref="T:Elmah.ErrorLog"/> implementation that uses SQL Server Compact 4 as its backing store.
-            </summary>
-        </member>
-        <member name="M:Elmah.SqlCompactErrorLog.#ctor(System.Collections.IDictionary)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Elmah.SqlCompactErrorLog"/> class
-            using a dictionary of configured settings.
-            </summary>
-        </member>
-        <member name="M:Elmah.SqlCompactErrorLog.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Elmah.SqlCompactErrorLog"/> class
-            to use a specific connection string for connecting to the database.
-            </summary>
-        </member>
-        <member name="M:Elmah.SqlCompactErrorLog.Log(Elmah.Error)">
-            <summary>
-            Logs an error to the database.
-            </summary>
-            <remarks>
-            Use the stored procedure called by this implementation to set a
-            policy on how long errors are kept in the log. The default
-            implementation stores all errors for an indefinite time.
-            </remarks>
-        </member>
-        <member name="M:Elmah.SqlCompactErrorLog.GetErrors(System.Int32,System.Int32,System.Collections.IList)">
-            <summary>
-            Returns a page of errors from the databse in descending order 
-            of logged time.
-            </summary>
-            
-        </member>
-        <member name="M:Elmah.SqlCompactErrorLog.GetError(System.String)">
-            <summary>
-            Returns the specified error from the database, or null 
-            if it does not exist.
-            </summary>
-        </member>
-        <member name="P:Elmah.SqlCompactErrorLog.Name">
-            <summary>
-            Gets the name of this error log implementation.
-            </summary>
-        </member>
-        <member name="P:Elmah.SqlCompactErrorLog.ConnectionString">
-            <summary>
-            Gets the connection string used by the log to connect to the database.
-            </summary>
-        </member>
         <member name="T:Elmah.SqlErrorLog">
             <summary>
             An <see cref="T:Elmah.ErrorLog"/> implementation that uses Microsoft SQL 
@@ -1772,6 +1734,57 @@
         <member name="T:Elmah.SqlErrorLog.AsyncResultWrapper">
             <summary>
             An <see cref="T:System.IAsyncResult"/> implementation that wraps another.
+            </summary>
+        </member>
+        <member name="T:Elmah.SqlServerCompactErrorLog">
+            <summary>
+            An <see cref="T:Elmah.ErrorLog"/> implementation that uses SQL Server 
+            Compact 4 as its backing store.
+            </summary>
+        </member>
+        <member name="M:Elmah.SqlServerCompactErrorLog.#ctor(System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Elmah.SqlServerCompactErrorLog"/> class
+            using a dictionary of configured settings.
+            </summary>
+        </member>
+        <member name="M:Elmah.SqlServerCompactErrorLog.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Elmah.SqlServerCompactErrorLog"/> class
+            to use a specific connection string for connecting to the database.
+            </summary>
+        </member>
+        <member name="M:Elmah.SqlServerCompactErrorLog.Log(Elmah.Error)">
+            <summary>
+            Logs an error to the database.
+            </summary>
+            <remarks>
+            Use the stored procedure called by this implementation to set a
+            policy on how long errors are kept in the log. The default
+            implementation stores all errors for an indefinite time.
+            </remarks>
+        </member>
+        <member name="M:Elmah.SqlServerCompactErrorLog.GetErrors(System.Int32,System.Int32,System.Collections.IList)">
+            <summary>
+            Returns a page of errors from the databse in descending order 
+            of logged time.
+            </summary>
+            
+        </member>
+        <member name="M:Elmah.SqlServerCompactErrorLog.GetError(System.String)">
+            <summary>
+            Returns the specified error from the database, or null 
+            if it does not exist.
+            </summary>
+        </member>
+        <member name="P:Elmah.SqlServerCompactErrorLog.Name">
+            <summary>
+            Gets the name of this error log implementation.
+            </summary>
+        </member>
+        <member name="P:Elmah.SqlServerCompactErrorLog.ConnectionString">
+            <summary>
+            Gets the connection string used by the log to connect to the database.
             </summary>
         </member>
         <member name="T:Elmah.StringFormatter">

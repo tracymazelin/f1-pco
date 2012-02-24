@@ -260,7 +260,7 @@ namespace F1toPCO.Controllers
             else
             {
                 return RedirectToAction("Terms");
-            }           
+            }
         }
 
         public ActionResult Authenticate()
@@ -270,7 +270,7 @@ namespace F1toPCO.Controllers
                 return RedirectToAction("Ready");
             }
             else
-            {                
+            {
                 this.GetF1RequestToken();
             }
 
