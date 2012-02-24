@@ -24,8 +24,6 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-USE [db2050]
-GO
 
 /****** Object:  Table [dbo].[ELMAH_Error]    Script Date: 02/21/2012 10:44:42 ******/
 SET ANSI_NULLS ON
